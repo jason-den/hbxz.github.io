@@ -10,8 +10,6 @@ tags:
   - Meta
 ---
 
-<p id = "build"></p>
-
 ### Todos of my blog
 
 - [ ] upload security notes
