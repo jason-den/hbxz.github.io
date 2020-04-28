@@ -17,3 +17,7 @@
 - [ ] pwa personalisation
 
 > Credit: [template from HUX](https://github.com/Huxpro/huxpro.github.io).
+
+- [ ] More topics of Sec
+  - [one time pad](https://www.openlearning.com/unswcourses/courses/sec-2020/otp/)
+- [one time pad](https://www.openlearning.com/unswcourses/courses/sec-2020/otp/)
