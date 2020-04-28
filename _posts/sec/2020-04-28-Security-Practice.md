@@ -1,20 +1,20 @@
 ---
 layout: post
-title: "Security Practice"
-subtitle: ""
-date: 2020-04-28 15:00:00
+title: "Security Practices"
+subtitle: "A series of practices from Security course"
+date: 2020-04-28 17:00:00
 author: "Jason Denn"
 header-img: "img/post-bg-2015.jpg"
 catalog: true
 tags:
-  - Security Practices
-  - thread modeling
-	- Threat Tree
+  - sec
+  - password
 ---
 
-## Threat Modelling
 
-Threat modelling is one of the formal ways that we assess and document risk within the Information Security Industry. 
+
+## Threat Modelling
+It is one of the formal ways that we assess and document risk within the Information Security Industry. 
 
 There are several frameworks which are used to help build threat models : 
 
