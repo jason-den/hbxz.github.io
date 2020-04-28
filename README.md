@@ -26,11 +26,9 @@ Disqus section is currently unavailable. Will fix soon.
 
 - [ ] fix pic local reference problem
 
-
-
-### Blogging 
+### Blogging
 
 - [ ] upload previous security notes
 - [ ] upload previous MERN practice notes
 - [ ] Learn and take notes on topics of Sec
-  - [one time pad](https://www.openlearning.com/unswcourses/courses/sec-2020/otp/)
+  - [one time pad](https://www.openlearning.com/unswcourses/courses/sec-2020/otp/) ; [Vulnerabilities](https://www.openlearning.com/unswcourses/courses/sec-2020/vulns/); [spot the fake](https://www.openlearning.com/unswcourses/courses/sec-2020/fake/); 
