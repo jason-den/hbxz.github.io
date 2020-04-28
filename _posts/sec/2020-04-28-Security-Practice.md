@@ -26,7 +26,7 @@ There are several frameworks which are used to help build threat models :
 
 Here we use a `Threat Tree` to analyse just some of the potential attacks against a petrol station. 
 
-![Petrol Station](./2020-04-28-Security-Practice.assets/Petrol Station.png)
+![Petrol Station](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/04/Petrol%20Station.png)
 
 ### Practice -- high voltage electricity transmission network
 
@@ -43,7 +43,7 @@ Develop an attack tree for a company operating in the high voltage electricity t
 
 My solution:
 
-![attack tree](./2020-04-28-Security-Practice.assets/Screen Shot 2020-04-28 at 19.28.15.png)
+![attack tree](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/04/Screen%20Shot%202020-04-28%20at%2019.28.15.png)
 
 Summary -- weakest point and protection
 
@@ -57,7 +57,7 @@ Summary -- weakest point and protection
 
 High voltage electricity networks are responsible for providing interconnectedness between entire continents to ensure the continual supply of electricity, such as the National Electricity Market. If one or more of these suppliers were to go down, the entire eastern Australian seaboard could be without power for an extended period of time.
 
-![ElectricalTransmissionInfrastructureMap](./2020-04-28-Security-Practice.assets/ElectricalTransmissionInfrastructureMap.png)
+![ElectricalTransmissionInfrastructureMap](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/04/ElectricalTransmissionInfrastructureMap.png)
 
 Lifts, trains, traffic lights would cease to function, rendering our cities in difficulty. Within 6 hrs 3G/4G radio communications would no longer work, knocking out key communication channels. Water pumping stations and treatment facilities are unable to supply water to the city systems. After 11 hours sewerage treatment plants would be inoperable, resulting in effluent and raw sewerage being discharged in the harbour and beaches. Hospitals become incapable of servicing patients at scale, turning patients away. Food becomes scarce as logistics networks shut down and cash becomes scarce. 
 
@@ -79,7 +79,7 @@ The moment I was reminded about the existence of this data I felt tense. I don't
 
 Previously I shared that [a determined stalker found his way to assult his idol](https://twitter.com/AndRahab/status/1233669099055538176) by diging out the location from a unexpected angle.
 
-![image-20200428202820549](./2020-04-28-Security-Practice.assets/image-20200428202820549.png)
+![image-20200428202820549](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/04/image-20200428202820549.png)
 
 >   Funny thing is, the stalker even utilized Google map street view to search the exact building. 
 
