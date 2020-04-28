@@ -63,4 +63,33 @@ Lifts, trains, traffic lights would cease to function, rendering our cities in d
 
 
 
-## 
+## Google yourself
+
+We're encouraged to download personal data from common companies or devices and analysis what supprised us:
+
+-   [facebook download your information](https://www.facebook.com/dyi)
+-   [Google Takeout](https://takeout.google.com/settings/takeout)
+-   Use a phone backup tool to extract the data from Apple iOS / Android Devices
+
+I pick Google tabkout. 
+
+The moment I was reminded about the existence of this data I felt tense. I don't even need to look into details cause I know I use Google map almost everyday and it has one of most sensitive data -- personal location data. 
+
+### personal location data, what can go wrong?
+
+Previously I shared that [a determined stalker found his way to assult his idol](https://twitter.com/AndRahab/status/1233669099055538176) by diging out the location from a unexpected angle.
+
+![image-20200428202820549](2020-04-28-security-practice.assets/image-20200428202820549.png)
+
+>   Funny thing is, the stalker even utilized Google map street view to search the exact building. 
+
+I hope this illustrates clearly the worst case about location data leaking to you.
+
+If these data leak out to black market, those high value target of physical attack are in danger:
+
+-   Political protestants will be easily located and arrested or killed
+-   Female celebrities who live alone might be sexually assaulted
+-   Billionaire's residences can be listed out, attackers can check them one by one and seek vulnerability for kidnapping
+
+
+
