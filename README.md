@@ -24,7 +24,7 @@ Disqus section is currently unavailable. Will fix soon.
 
 - [ ] pwa personalisation
 
-- [ ] fix pic local reference problem
+- [x] fix pic local reference problem
 
 ### Blogging
 
