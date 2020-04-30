@@ -7,10 +7,10 @@ author: "Jason Denn"
 header-img: "img/post-bg-2015.jpg"
 catalog: true
 tags:
-	- sec
-	- zero knowledge proof
-	- sudoku
-	- protocol design challenge
+  - security
+  - zero knowledge proof
+  - sudoku
+  - protocol design challenge
 ---
 
 

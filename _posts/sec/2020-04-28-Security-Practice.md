@@ -7,8 +7,9 @@ author: "Jason Denn"
 header-img: "img/post-bg-2015.jpg"
 catalog: true
 tags:
-  - sec
-  - password
+  - security
+  - threat modelling
+  - privacy
 ---
 
 
