@@ -1,14 +1,16 @@
 ---
 layout: post
-title: "The Trouble with Passwords"
-subtitle: ""
-date: 2020-04-28 16:00:00
+title: "Zero-Knowledge proofs"
+subtitle: "Hey, where is the basic trust, bro?"
+date: 2020-04-30 16:00:00
 author: "Jason Denn"
 header-img: "img/post-bg-2015.jpg"
 catalog: true
 tags:
-  - sec
-  - password
+	- sec
+	- zero knowledge proof
+	- sudoku
+	- protocol design challenge
 ---
 
 
