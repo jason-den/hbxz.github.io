@@ -39,9 +39,13 @@ K can **prove** to V that K has a **secret**, and some **property** about it, **
 
 > In another way of saying: proving the existence and some properties of a secret while hiding other details of this secret.
 
-He mentions three criteria of Zero-knowledge-proof:
+Wikipedia A zero-knowledge proof must satisfy three properties:
 
-To prove so, K makes an achievement that can be achieved if and only if his claim stands.
+1. **Completeness**: if the statement is true, the honest verifier (that is, one following the protocol properly) will be convinced of this fact by an honest prover.
+2. **Soundness**: if the statement is false, no cheating prover can convince the honest verifier that it is true, except with some small probability.
+3. **Zero-knowledge**: if the statement is true, no verifier learns anything other than the fact that the statement is true. In other words, just knowing the statement (not the secret) is sufficient to imagine a scenario showing that the prover knows the secret. This is formalized by showing that every verifier has some *simulator* that, given only the statement to be proved (and no access to the prover), can produce a transcript that "looks like" an interaction between the honest prover and the verifier in question.
+
+In our case, K makes an achievement that can be achieved if and only if his claim stands.
 
 - correctness
   - V can verify this achievement, that it is not a fake one.
