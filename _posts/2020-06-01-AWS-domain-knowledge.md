@@ -4,7 +4,7 @@ title: "AWS SA-A review notes"
 subtitle: ""
 date: 2020-06-01 00:00:00
 author: "Jason Denn"
-header-img: "img/AWS-Certs.png"
+header-img: "img/post-bg-2015.jpg"
 catalog: true
 tags:
   - infrastructure
