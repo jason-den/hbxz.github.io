@@ -200,6 +200,8 @@ Action: How to share a resource to another account through ARM?
 
 > what are they? what features they have? cost? what fits what?
 
+S3-Standard has an availability of ==99.99%==, S3-IA has an availability of ==99.9%== while S3-1Zone-IA only has ==99.5%==
+
 ![Screen Shot 2020-06-04 at 14.07.03](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/06/Screen%20Shot%202020-06-04%20at%2014.07.03.png)
 
 #### Performance table
@@ -802,22 +804,6 @@ EFS scales performance along with capacity, and, while this can be very benefici
 
 ![IMG_3F2E828D8AD7-1](2020-06-01-AWS-domain-knowledge.assets/IMG_3F2E828D8AD7-1.jpeg)
 
-### Security Groups
-
-- regional
-
-- allowing one inbound rule auto allows one outbound rule ( `Stateful` )
-
-- DB type SG auto sets the port
-
-- Cannot block specific IP addresses. Can specify allow rules, but not deny rules. (Deny by default)
-
-  > instead use Network Access Control Lists (ACL)
-
-- By default, all inbound traffic is `blocked` and all outbound traffic is allowed.
-
-- Change take effect immediately.
-
 
 
 ### ENI vs ENA vs EFA
@@ -959,6 +945,12 @@ At its most basic level, allows 3 different behaviours:
 
 - Standard Reserved Instances can be moved between regions? __False__
 
+- Is cfn-init a component of EC2 AS? 
+
+  > No. cfn-init is not a component of the EC2 Autoscaling service. Instead it is a feature which allows commands to be run, and software installed/configured on EC2 instances when they launch.
+
+- ![image-20200709012019615](2020-06-01-AWS-domain-knowledge.assets/image-20200709012019615.png)
+
 
 
 ## DB
@@ -973,6 +965,8 @@ At its most basic level, allows 3 different behaviours:
 ### RDS Backups, Multi-AZ & Read Replicas - Lab
 
 ### DynamoDB
+
+DynamoDB makes use of parallel processing to achieve predictable performance. You visualise each partition as an independent DB server of fixed size. Each responsible for a defined block of data. In SQL terminology it is called sharding. The documentation is specific about the SSDs, but makes no mention of read-replicas or EBS-Optimised. Caching in-front of DDB is an option (DAX), but it is not inherent to DDB.
 
 ### Advanced DynamoDB
 
@@ -1099,11 +1093,17 @@ Alias record:
 
 > SA-A are expected to be able to build a VPC by memory
 
-#### VPC general topic
+### VPC general topic
 
-Application scenario:
+- When you create a custom VPC, a default Security Group, Access control List, and Route Table are created automatically. You must create your own subnets, Internet Gateway, and NAT Gateway (if you need one.)
 
-> You can easily customize the network configuration for your Amazon Virtual Private Cloud. 
+- By default, how many VPCs am I allowed in each AWS Region -- 5
+
+- By default, instances in new subnets in a custom VPC can communicate with each other across Availability Zones.
+
+  > In a custom VPC with new subnets in each AZ, there is a Route that supports communication ==across all subnets/AZs==. Plus a ==Default SG with an allow rule 'All traffic, All protocols, All ports, from anything using this Default SG'==.
+
+
 
 - You can create a ==public-facing subnet== for your webservers that has access to the Internet, and place your backend systems such as databases or application servers in a ==private-facing subnet== with no Internet access. You can leverage multiple layers of security, including security groups and network access control lists, to help control access to Amazon EC2 instances in each subnet. 
 - You can create a Hardware Virtual Private Network (VPN) cnnection between your corporate datacenter and your VPC and leverage the AWS cloud as an extension of your corporate datacenter.
@@ -1168,6 +1168,21 @@ Application scenario:
 
 
 
+
+
+####  ELB on VPC
+
+- you need at least 2 public subnet to create a LB.
+
+
+
+#### Pen test on VPC
+
+- Are you permitted to conduct your own vulnerability scans on your own VPC without alerting AWS first?
+  - Depends on the type of scan and the service being scanned. Some scans can be performed without alerting AWS, some require you to alert. Until recently customers were not permitted to conduct Penetration Testing without AWS engagement. However that has changed. There are still conditions however.
+
+
+
 ### Practice - Build A Custom VPC
 
 1. Creating a custom VPC
@@ -1229,71 +1244,50 @@ Next section is `NAT Instance` and `NAT gateway` which will help to solve this.
 
 
 
-### Network Address Translation (NAT)
+### Internet Gateway
 
-> In order to download software, the private subnet need to communicate with IGW.
->
-> `NAT Gateway` and `NAT Instances` are to solve this issue. 
->
-> `NAT Gateway` are ==HA==, while  `NAT Instances` ( slight outdated ) are ==EC2 instances and might fail==. 
+- Egress-Only Internet Gateway
 
-![image-20200707154721725](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/image-20200707154721725.png)
+The purpose of an "Egress-Only Internet Gateway" is to allow IPv6 based traffic within a VPC to access the Internet, whilst denying any Internet based resources the possibility of initiating a connection back into the VPC.
 
-
-
-
+- what is the purpose on an virtual IG?
 
 
 
 ### Access Control Lists (ACL)
 
-![Screen Shot 2020-07-03 at 14.34.44](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-07-03 at 14.34.44.png)
+#### Lab - create a NACL
+
+1. Create `MyWebNACL` in a VPC
+
+   > By default, all inbound and outbound traffic are ==DENY==
+
+   All subnet would be associated with Default ACL.
+
+2. Associate a public subnet with `MyWebNACL` which is currently DENY everything. 
+
+   Check connecting to an instance in this subnet, it should fail as timeout.
+
+3. Add rules on both in inbound and outbound traffic on HTTP, HTTPS and SSH.
+
+   > Note that we also allow the `Ephemeral port`. And AWS NAT Gateway use 1024-65535 as Ephemeral Ports range.
+
+![IMG_ABDE9268B993-1](2020-06-01-AWS-domain-knowledge.assets/IMG_ABDE9268B993-1.jpeg)
+
+4. Try adding a DENY rule to reject port `80` as `Rule # 400`, it will not deny. Try same rule with number `99` will deny.
+
+   ==The smaller `#` rule wins.==
+
+5. ACL act before security groups.
 
 
 
-### Custom VPCs and ELBs
+- Your VPC automatically comes with a default network ACL, and by default it allows all outbound and inbound traffic. 
+- You can create custom network ACLs. By default, each custom network ACL denies all inbound and outbound traffic until you add rules. 
+- Each subnet in your VPC must be associated with a network ACL. If you don't explicitly associate a subnet with a network ACL, the subnet is automatically associated with the default network ACL. 
+- Block IP Addresses using network ACLs not Security Groups 
 
-### VPC Flow Logs
-
-### Bastions
-
-### Direct Connect
-
-### Setting Up A VPN Over A Direct Connect Connection
-
-### Global Accelerator
-
-### VPC End Points
-
-
-
-
-
-
-
-
-
-### NAT ( network address translation )
-
-#### NAT Instances
-
-- When creating a NAT instance, Disable Source/Destination Check on the Instance. 
-
-- ==NAT instances== must be in a ==public== subnet. 
-- There must be a ==route out of the private subnet to the NAT instance==, in order for this to work. 
-- The amount of ==traffic== that NAT instances can support depends on the ==instance size==. If you are bottlenecking, increase the instance size. 
-- You can create ==high availability using Autoscaling Groups==, multiple subnets in different AZs, and a script to automate failover. 
-- behind a SG
-
-#### NAT Gateways
-
-![NAT-gateway-expained](2020-06-01-AWS-domain-knowledge.assets/NAT-gateway-expained.png)
-
-
-
-
-
-### ACL ( Access Control Lists )
+#### Base points
 
 - VPC automatically comes with a default network ACL 
 
@@ -1323,9 +1317,124 @@ Next section is `NAT Instance` and `NAT gateway` which will help to solve this.
 
 - 
 
+### Security Groups
+
+- regional
+
+- allowing one inbound rule auto allows one outbound rule ( `Stateful` )
+
+- DB type SG auto sets the port
+
+- Cannot block specific IP addresses. Can specify allow rules, but not deny rules. (Deny by default)
+
+  > instead use Network Access Control Lists (ACL)
+
+- By default, all inbound traffic is `blocked` and all outbound traffic is allowed.
+
+- Change take effect immediately.
 
 
-### build a custom VPC and ELBs
+
+- Security groups are ==stateful== — if you send a request from your instance, the response traffic for that request is allowed to flow in regardless of inbound security group rules. Responses to allowed inbound traffic are allowed to flow out, regardless of outbound rules.
+
+
+
+
+
+
+
+
+
+![Screen Shot 2020-07-03 at 14.34.44](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-07-03 at 14.34.44.png)
+
+
+
+### Network Address Translation (NAT)
+
+
+
+#### Create NAT Instance
+
+> In order to download software, the private subnet need to communicate with IGW.
+>
+> `NAT Gateway` and `NAT Instances` are to solve this issue. 
+>
+> `NAT Gateway` are ==HA==, while  `NAT Instances` ( slight outdated ) are ==EC2 instances and might fail==. 
+
+
+
+
+
+1. Create an EC2 instance call `NAT_Instance` by NAT AMI 
+
+2. Disable ==source and destination check== for this instance
+
+   > By default, EC2 instances do this check and forbid request that source or destination is not itself. But NAT Instances acting as gateway so we have to disable this check.
+
+3. Add route that, for any out reaching destination, target  `NAT_Instance`.
+
+   > By this config, our `NAT_Instance` acts as a bridge between private subnet and public subnet inorder to reach IGW.
+
+![IMG_9E675FDE0D22-1](2020-06-01-AWS-domain-knowledge.assets/IMG_9E675FDE0D22-1.jpeg)
+
+
+
+
+
+- When creating a NAT instance, Disable Source/Destination Check on the Instance. 
+- ==NAT instances== must be in a ==public== subnet. 
+- There must be a ==route out of the private subnet to the NAT instance==, in order for this to work. 
+- The amount of ==traffic== that NAT instances can support depends on the ==instance size==. If you are bottlenecking, increase the instance size. 
+- You can create ==high availability using Autoscaling Groups==, multiple subnets in different AZs, and a script to automate failover. 
+- behind a SG
+
+#### NAT Instances summary
+
+- Single point of failure: Lost of subnet instances depend on it.
+
+- Can be performance bottleneck: can auto scale and script to set rout
+
+- When creating a NAT instance, Disable Source/Destination Check on the Instance. 
+
+- NAT instances must be in a public subnet. 
+
+- There must be a route out of the private subnet to the NAT instance, in order for this to work. 
+
+- The amount of traffic that NAT instances can support depends on the instance size. If you are bottlenecking, increase the instance size. 
+
+- You can create high availability using Autoscaling Groups, multiple subnets in different AZs, and ==a script to automate failover==. 
+
+- Behind a Security Group. 
+
+- If you have resources in multiple Availability Zones and they share one NAT gateway, in the event that the NAT gateway's Availability Zone is down, resources in the other Availability Zones lose internet access.
+
+  To create an ==Availability Zone-independent architecture==, create a NAT gateway in each AZ and configure your routing to ensure that ==resources use the NAT gateway in the same AZ.== 
+
+
+
+#### Create NAT Gateway
+
+- Create a NAT Gateway:
+  - in public subnet
+  - create new EIP ( elastic IP ) and attach it to it.
+- Add Route in Main Route Table: `0.0.0.0/0`  to this NAT-G
+
+Now private-subnet instances can access to internet by this NAT-G
+
+![image-20200707154721725](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/NAT-Gateway.png)
+
+#### NAT Gateway summary
+
+- HA: redendant inside the AZ  
+
+- Redundant inside the Availability Zone 
+- Preferred by the enterprise 
+- Starts at 5Gbps and scales currently to 45Gbps 
+- No need to patch  
+- Automatically assigned a public ip address 
+- Remember to update your route tables. 
+- No need to disable Source/Destination Checks 
+- ==Not associated with security groups==
 
 
 
@@ -1333,56 +1442,475 @@ Next section is `NAT Instance` and `NAT gateway` which will help to solve this.
 
 ### VPC Flow Logs
 
+#### What it is
+
+VPC Flow Logs is a feature that enables you to capture information about the IP ==traffic going to and from network interfaces in your VPC==. 
+
+Flow log data is stored ==using Amazon CloudWatch Logs==. After you've created a flow log, you can view and retrieve its data in Amazon CloudWatch Logs. 
+
+
+
+- Flow logs can be created at 3 levels
+
+  - VPC
+  - subnet 
+  - Network Interface Level
+
+  > Down to the ENI as well; But not ==Instance level==
+
+
+
+#### Create one
+
+1. Go to CloudWatch, create a Log group: `VPCFlowLogs`
+
+2. Go to VPC, select one VPC, hit `create flow log`,
+
+   we have options: 
+
+   - Filter `[All, Accept, Reject]` on traffic type.
+   - Destination [to S3, to CloudWatch Logs]
+   - Destination log group, we just created it in step 1
+   - IAM role. 
+
+
+
+
+
+#### Some IP Traffic is not monitored:
+
+- Traffic generated by instances when they contact the Amazon DNS server. 
+
+  > If you use your own DNS server, then all traffic to that DNS server is logged. 
+
+- Traffic generated by a Windows instance for Amazon Windows license activation. 
+
+- Traffic to and from 169.254.169.254 for instance metadata.
+
+- DHCP traffic. 
+
+- Traffic to the reserved IP address for the default VPC router. 
+
+#### Tips
+
+- You cannot enable flow logs for a VPC that is not in your account
+- You can tag flow logs
+- You cannot change the IAM role of a flow log. You set it when you create it, that's it.
+
+
+
 
 
 ### Bastions
 
+A bastion host is a special purpose computer on a network specifically designed and configured to ==withstand attacks==. The computer ==generally hosts a single application, for example a proxy server==, and ==all other services are removed or limited to reduce the threat to the computer==. It is hardened in this manner primarily due to its location and purpose, which is either on the outside of a firewall or in a demilitarized zone (DMZ) and usually involves access from untrusted networks or computers. 
+
+![image-20200707170652084](2020-06-01-AWS-domain-knowledge.assets/image-20200707170652084.png)
+
+- A NAT Gateway or NAT Instance is used to provide internet traffic to EC2 instances in a private subnets. 
+
+- A Bastion is used to securely administer EC2 instances (Using SSH or RDP). 
+- Bastions are called ==Jump Boxes== in Australia. 
+- You cannot use a NAT Gateway as a Bastion host. 
+
+
+
 ### Direct Connect
 
-### Setting up a VPN over a direct connect connection
-
-### Global accelerator
-
-### VPC End points
-
-- There are two types of VPC endpoints: Interface Endpoints, Gateway Endpoints 
-  - Currently Gateway Endpoints Support: Amazon S3, DynamoDB 
 
 
+#### What it is
+
+AWS Direct Connect is a cloud service solution that makes it easy to establish a ==dedicated== network connection from your premises to AWS. Using AWS Direct Connect, you can ==establish private connectivity between AWS and your datacenter, office, or colocation environment==, which in many cases can ==reduce your network costs==, increase bandwidth ==throughput==, and provide a more consistent network experience than Internet-based connections.
+
+![Derect-Connect-Visualization](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/Derect-Connect-Visualization.png)
+
+#### Base point
+
+- Direct Connect ==directly connects your data center to AWS==
+- Useful for ==high throughput== workloads (ie lots of network traffic) 
+- Useful when you need a ==stable and reliable secure== connection. 
+
+#### Setting Up A VPN Over A Direct Connect Connection - [Official Video](https://www.youtube.com/watch?v=dhpTTT6V1So&feature=youtu.be)
+
+![Steps-Setting-Up-Direct-Connect](2020-06-01-AWS-domain-knowledge.assets/Steps-Setting-Up-Direct-Connect.png)
+
+### Global Accelerator
+
+![How-GA-Works](2020-06-01-AWS-domain-knowledge.assets/How-GA-Works.png)
+
+#### Base points
+
+- By default, it provides you two __static IP address__; you can also bring your own.
+- `Traffic dial`: For each endpoint group, you can set a traffic dial to control the percentage of traffic that is directed to the group.  ( Like weighted routing policy I assume. )
+- `Network Zone`: isolated unit with its own set of physical infrastructure which is used to provide global accelerator services.
+- Can also do weighted routing in a group
+
+#### [FAQ](https://aws.amazon.com/global-accelerator/faqs)
+
+##### ELB vs. GA
+
+ ==ELB== provides load balancing ==within one Region==; AWS Global Accelerator provides traffic management ==across Regions==.
+
+##### Benefits
+
+- Instant regional failover
+
+- HA
+
+- No variability around clients that cache IP addresses
+
+- Lower latency
+
+  ![image-20200708155724673](2020-06-01-AWS-domain-knowledge.assets/image-20200708155724673.png)
+
+
+
+### VPC End Points -- [Doc](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints.html)
+
+There are two types of VPC endpoints: __interface endpoints__ and __gateway endpoints__. 
+
+> Pick the type depends on the supported service.
+
+#### Interface endpoints (powered by [AWS PrivateLink)](https://aws.amazon.com/privatelink/)
+
+> Seems every AWS services support Inteface endpoint except two: ==S3 and DynamoDB== 
+
+#### Gateway endpoints
+
+A [gateway endpoint](https://docs.aws.amazon.com/vpc/latest/userguide/vpce-gateway.html) is a gateway that ==you specify as a target for a route== in your route table for traffic destined to a supported AWS service. The following AWS services are supported:
+
+- Amazon S3
+- DynamoDB
+
+
+
+Using Gateway endpoints, you can do the following transformation: 
+
+<img src="2020-06-01-AWS-domain-knowledge.assets/image-20200708161729617.png" alt="image-20200708161729617" height="250" />  <img src="2020-06-01-AWS-domain-knowledge.assets/image-20200708161817017.png" alt="image-20200708161817017" height="250" />
+
+By using VPC Gateway, you can stay in AWS cloud and communicate with these services without going through internet.
+
+![VPC-Endpoint-example](2020-06-01-AWS-domain-knowledge.assets/VPC-Endpoint-example.png)
+
+
+
+
+
+#### VPC best practices
+
+> Because these best practices might not be appropriate or sufficient for your environment, treat them as helpful considerations rather than prescriptions.
+
+- Use __multiple Availability Zone__ for HA
+- Use SG and network ACLs. 
+- Use IAM policies to control access.
+- Use Amazon CloudWatch to monitor your VPC components and VPN connections.
+- Use flow logs to capture information about IP traffic going to and from network interfaces in your VPC. 
 
 
 
 ## HA Architecture
 
-#### Load Balancers And Health Checks 
-
-- Sticky Sessions enable your users to stick to the same EC2 instance. Can be useful if you are storing information locally to that instance. 
-
-  > only ALB and classical LB support this feature because [it is implemented by cookie](https://stackoverflow.com/questions/46912629/aws-network-load-balancing-session-stickiness-not-consistent)
-
-- Cross Zone Load Balancing enables you to load balance across multiple AZs. 
-
-- ==Path patterns== allow you to direct traffic to different EC2 instances based on the ==URL== contained in the request. 
 
 
 
-#### Autoscaling Theory
 
-#### Autoscaling Groups Lab
+### Load Balancers And Health Checks 
 
-#### HA Architecture
 
-#### HA WordPress Site
+
+#### Cross Zone Load Balancing
+
+- enables you to load balance across ==multiple AZs==. 
+
+<img src="https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/image-20200708172237533.png" alt="image-20200708172237533" style="zoom:50%;" />
+
+
+
+#### Path Based routing
+
+==Path patterns== allow you to direct traffic to different EC2 instances based on the ==URL== contained in the request. 
+
+
+
+#### Sticky Sessions
+
+It enable your users to stick to the same EC2 instance. Can be useful if you are storing information locally to that instance. 
+
+- Only ALB and classical LB support this feature because [it is implemented by cookie](https://stackoverflow.com/questions/46912629/aws-network-load-balancing-session-stickiness-not-consistent).
+  - ALB will stick the traffic to `Target Group Level`
+  - CLB will stick to instance.
+
+### Autoscaling
+
+#### Price
+
+There is no additional charge for AWS Auto Scaling. You pay only for the AWS resources needed to run your applications and [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) monitoring fees.
+
+![image-20200708172705641](2020-06-01-AWS-domain-knowledge.assets/image-20200708172705641.png)
+
+> 3 components: Group; Lauch Configuration ( or, Template --- AMI ID, instance type, key pair, SG ......);  Options
+
+#### Functions
+
+- **Monitor the health of running instances**
+
+  Amazon EC2 Auto Scaling ensures that your application is able to receive traffic and that EC2 instances are working properly. Amazon EC2 Auto Scaling periodically performs health checks to identify any instances that are unhealthy.
+
+- **Replace impaired instances automatically**
+  When an impaired instance fails a health check, Amazon EC2 Auto Scaling automatically terminates it and replaces it with a new one. That means that you don’t need to respond manually when an instance needs replacing.
+
+- **Balance capacity across Availability Zones**
+  Amazon EC2 Auto Scaling can automatically balance instances across zones, and always launches new instances so that they are balanced between zones as evenly as possible across your entire fleet.
+
+#### Scaling options
+
+#### Dynamic Scaling
+
+Scaling base on policy you set. Sey CPU utilization, or, you could set a target value using the new “Request Count Per Target” metric from Application Load Balancer.
+
+##### Scheduled Scaling
+
+Dynamic Scaling with policy on calendar. 
+
+For example, every week the traffic to your web application starts to increase on Wednesday, remains high on Thursday, and starts to decrease on Friday. You can plan your scaling activities based on the known traffic patterns of your web application.
+
+##### Predictive Scaling 
+
+ML-powered fancy thing.
+
+#### Practice Lab
+
+1. Create a Launch Configuration
+
+2. Create an AS group
+
+   > It starts working
+
+3. You can check the `Activity Status`
+4. When you delete a AS group, all the instances created by it will auto terminated
+
+
+
+### HA Architecture
+
+![image-20200708175823934](2020-06-01-AWS-domain-knowledge.assets/HA-example.png)
+
+
+
+![image-20200708180036045](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/HA-quiz.png)
+
+Answer is 3 AZ with 3 instances. 
+
+### HA WebSite Lab -- WordPress 
+
+![image-20200708180345280](2020-06-01-AWS-domain-knowledge.assets/image-20200708180345280.png)
+
+1. Create S3 Bucket
+2. Create CloudFront Distribution
+3. Create SG: `WebServer`, `DB` ( open the port for MySQL 3306 )
+4. Create RDS Instance
+   1. SG
+   2. VPC
+   3. Name
+5. WP EC2 istance
+
+
 
 #### Setting Up EC2
 
-#### Adding Resilience And Autoscaling
 
-#### Cleaning Up
 
-#### CloudFormation
+##### URL rewrite
 
-#### Elastic Beanstalk
+1. In `htaccess` file, you can config URL `rewriterule` so that your website serves CloudFront/S3 urls rather than local storage files.
+
+> Get the CloudFront url by combining it's domainname 
+
+2. Config Apache to allow URL rewrite: edit  `/etc/httpd/httpd.conf`
+
+   ![image-20200708182810662](2020-06-01-AWS-domain-knowledge.assets/image-20200708182810662.png)
+
+3. Bucket policy update
+
+    ![image-20200708183006522](2020-06-01-AWS-domain-knowledge.assets/image-20200708183006522.png)
+
+
+
+
+### Adding Resilience And Autoscaling
+
+![image-20200708195716076](2020-06-01-AWS-domain-knowledge.assets/image-20200708195716076.png)
+
+A writer node for editing content.
+
+A fleet of nodes for reading.
+
+
+
+1. config a read node
+
+Using `crond` to schedual work automatically
+
+- edit `etc/crontab` 
+
+![image-20200708195922019](2020-06-01-AWS-domain-knowledge.assets/image-20200708195922019.png)
+
+`--delete` will delete the deleted files and make a perfect copy.
+
+2. create an AMI from the __read node__ we just config
+3. config a write node
+
+![image-20200708200756230](2020-06-01-AWS-domain-knowledge.assets/image-20200708200756230.png)
+
+This config does two things:
+
+- sync the code to S3-code bucket
+- sync the content to S3-media bucket
+
+4. create an AMI from the __write node__ we just config
+
+### RDS auto failover accross AZ
+
+
+
+### CloudFormation
+
+#### Create a Stack - Lab
+
+1. Choose a Template
+2. Fill in all specification
+
+3. Config review
+
+   ![image-20200708202630306](2020-06-01-AWS-domain-knowledge.assets/image-20200708202630306.png)
+
+4. Here is the event log
+
+![image-20200708202559280](2020-06-01-AWS-domain-knowledge.assets/image-20200708202559280.png)
+
+
+
+Try [AWS Quick Starts](https://aws.amazon.com/quickstart/)
+
+
+
+
+
+### Elastic Beanstalk
+
+Elastic Beanstalk v.s LightSail
+
+Developers describe **Amazon LightSail** as "*Simple Virtual Private Servers on AWS*". Everything you need to jumpstart your project on AWS—compute, storage, and networking—for a low, predictable price. Launch a virtual private server with just a few clicks. 
+
+On the other hand, **AWS Elastic Beanstalk** is detailed as "*Quickly deploy and manage applications in the AWS cloud*". Once you upload your application, Elastic Beanstalk automatically handles the deployment details of capacity provisioning, load balancing, auto-scaling, and application health monitoring.
+
+#### Example
+
+![image-20200708210006280](2020-06-01-AWS-domain-knowledge.assets/image-20200708210006280.png)
+
+You can also config it
+
+![image-20200708210101616](2020-06-01-AWS-domain-knowledge.assets/image-20200708210101616.png)
+
+You only need to upload the code. And it will anto setup and grow to fit capacity need.
+
+### Q&A
+
+- ==Yes== Can I "force" a failover for any RDS instance that has Multi-AZ configured?
+
+- ==NO==  When you have deployed an RDS database into multiple availability zones, can you use the secondary database as an independent read node?
+
+- the likelihood that a resource will work as designed -- ==Reliability==
+
+- the likelihood that a resource will continue to exist until you decide to remove it -- ==Durability==
+
+- the likelihood that you can access a resource or service when you need it ==Availability==
+
+- A product manager walks into your office and advises that the simple single node MySQL RDS instance that has been used for a pilot needs to be upgraded for production. She also advises that they may need to alter the size of the instance once they see how many people use the system during peak periods. The key concern is that there can not be any outages of more than a few seconds during the go-live period. What would you recommend?
+
+  - Convert the RDS instance to a multi-AZ implementation.
+
+  - Consider replacing it with Aurora before go live.
+
+    > There are two issues to be addressed in this question.
+    >
+    > - ==Minimizing outages==, whether due to required maintenance or unplanned failures. 
+    > - the ==possibility of needing to scale up or down==. 
+    >
+    > 
+    >
+    > - Read-replicas can help you with high read loads, but are not intended to be a solution to system outages. 
+    > - Multi-AZ implementations will increase availability because ==in the event of a instance outage one of the instances in another AZs will pick up the load with minimal delay.== 
+    > - Aurora provided the ==same capability with potentially higher availability and faster response.==
+
+
+
+
+
+## Architecture Topics
+
+
+
+### Event-Driven Architecture
+
+An event-driven architecture ==uses events to trigger and communicate== between ==decoupled services== and is common in modern applications built with microservices. ==An event is a change in state==, or an update, like an item being placed in a shopping cart on an e-commerce website. Events can either ==carry the state== (the item purchased, its price, and a delivery address) or events ==can be identifiers== (a notification that an order was shipped).
+
+Event-driven architectures have three key components: ==event producers, event routers, and event consumers==. 
+
+- A producer publishes an event to the router, which filters and pushes the events to consumers. 
+- Producer services and consumer services are decoupled, which allows them to be scaled, updated, and deployed independently.
+
+![1-SEO-Diagram_Event-Driven-Architecture_Diagram](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/1-SEO-Diagram_Event-Driven-Architecture_Diagram.b3fbc18f8cd65e3af3ccb4845dce735b0b9e2c54-20200708224946647.png)
+
+
+
+#### Benefit
+
+- Scale and fail independently
+
+By decoupling your services, they are only aware of the event router, not each other. This means that your services are interoperable, but if one service has a failure, the rest will keep running. The event router acts as an elastic buffer that will accommodate surges in workloads.
+
+- Develop with agility
+
+You no longer need to write custom code to poll, filter, and route events; the event router will automatically filter and push events to consumers. The router also removes the need for heavy coordination between producer and consumer services, speeding up your development process.
+
+- Audit with ease
+
+An event router acts as a centralized location to audit your application and define policies. These policies can restrict who can publish and subscribe to a router and control which users and resources have permission to access your data. You can also encrypt your events both in transit and at rest.
+
+- Cut costs
+
+Event-driven architectures are push-based, so everything happens on-demand as the event presents itself in the router. This way, you’re not paying for continuous polling to check for an event. This means less network bandwidth consumption, less CPU utilization, less idle fleet capacity, and less SSL/TLS handshakes.
+
+
+
+#### To think about
+
+- The durability of your event source. Your event source should be reliable and guarantee delivery if you need to process every single event. 
+- Your performance control requirements. Your application should be able to handle the ==asynchronous nature== of event routers. 
+- Your event flow tracking. The indirection introduced by an event-driven architecture allows for dynamic tracking via monitoring services, but not static tracking via code analysis. 
+- The data in your event source. If you need to rebuild state, your event source should be deduplicated and ordered.
+
+
+
+[How to Use Amazon EventBridge to Build Decoupled, Event-Driven Architectures -- 7 Demos](https://pages.awscloud.com/AWS-Learning-Path-How-to-Use-Amazon-EventBridge-to-Build-Decoupled-Event-Driven-Architectures_2020_LP_0001-SRV.html?&trk=ps_a134p000003yBd8AAE&trkCampaign=FY20_2Q_eventbridge_learning_path&sc_channel=ps&sc_campaign=FY20_2Q_EDAPage_eventbridge_learning_path&sc_outcome=PaaS_Digital_Marketing&sc_publisher=Google)
+
+### Dead-Leter Queue (DLQ)
+
+![image-20200708223639854](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/image-20200708223639854.png)
+
+![image-20200708223747231](2020-06-01-AWS-domain-knowledge.assets/image-20200708223747231.png)
+
+
+
+### Fanout Pattern
+
+
+
+### S3 Event Notification
+
+
 
 
 
@@ -1390,11 +1918,16 @@ Next section is `NAT Instance` and `NAT gateway` which will help to solve this.
 
 ## Application
 
-### SQS
+### SQS - - Simple Queue Service
 
 - SQS is a way to de-couple your infrastructure SQS is pull based, not pushed based. 
 
-- Messages are 256 KB in size. 
+- Messages size are up to ==256 KB==.
+
+  - It's not a hard limit, you can increase it. 
+  - But then the message will be stored in S3
+
+- ==retention period==:  can be ==1 minute to 14 days==; by ==default is 4 days==. 
 
 - ==Visibility Time Out== is the amount of time that the message is invisible in the SQS queue after a reader picks up that message. ==Maximun is 12 hours==
 
@@ -1402,12 +1935,17 @@ Next section is `NAT Instance` and `NAT gateway` which will help to solve this.
   >
   > If the job is not processed within that time, the message will become visible again and another reader will process it. This could result in the same message being delivered twice. 
 
-- ==retention period==:  can be ==1 minute to 14 days==; by ==default is 4 days==. 
+- Long polling vs. short polling
+
+  - Long polling would not return a response untill a message arrives in the queue, or untill time out.
+  - Short polling returns immidiately.
+  - For an almost empty queue, using short polling would cost unnecessary money.
 
 - Standard SQS vs FIFO SQS
 
   - Standard: order is not guaranteed and messages can be delivered more than once. 
   - FIFO: order is strictly maintained and messases are delivered only once. 
+    - TPS limit: ==300==
 
 > With standard SQS / FIFO SQS, how to ensure a message is processed once and only once?
 
@@ -1423,13 +1961,17 @@ The Amazon SQS Free Tier provides you with ==1 million requests== per month at n
 
 ### SWF
 
-> Kind of a human version of SQS
+> Kind of a human-computer mix task version of SQS
+>
+> Amazon use it in their warehouse.
+
+
 
 #### SWF vs SQS 
 
 - Amazon SWF presents a ==task-oriented== API,  
 
-  > SQS offers a message-oriented API. 
+  > SQS offers a ==message-oriented== API. 
 
 - SWF, workflow execution, can last up to ==1 year== 
 
@@ -1439,7 +1981,7 @@ The Amazon SQS Free Tier provides you with ==1 million requests== per month at n
 
   > With Amazon SQS, you need to ==handle duplicated== messages and may also need to ensure that a message is processed only once. 
 
-- Amazon SWF keeps track of all the tasks and events in an application. 
+- Amazon SWF ==keeps track== of all the tasks and events in an application. 
 
   > With Amazon SQS, you need to implement your own ==application-level tracking==, ==especially== if your application uses ==multiple queues==. 
 
@@ -1451,15 +1993,31 @@ The Amazon SQS Free Tier provides you with ==1 million requests== per month at n
 
 
 
-### SNS
+### SNS - Simple Notification Service
 
-Benefits 
+#### Benefits 
 
 - Instantaneous, ==push==-based delivery (no polling) 
+
 - Simple APIs and easy integration with applications
+
 - Flexible message delivery over multiple transport protocols 
+
+  ==SMS, email, SQS message, calling any HTTP endpoint==
+
 - Inexpensive, pay-as-you-go model with no up-front costs 
+
 - Web-based AWS Management Console offers the simplicity of a point-and-click interface 
+
+- HA -All msg stored multi AZ.
+
+#### Topic
+
+==Topic== is an "access point" for allowing recipients to dynamically subscribe for identical copies of the same notification.
+
+One topic can support multiple endpoint type, e.g. iOS, Android and SMS. When you publish to a topic, SNS deliver appropriately formated copies to each subscriber.
+
+
 
 
 
@@ -1469,18 +2027,28 @@ A media transcoder in the cloud. It converts media files from their original sou
 
 ### API Gateway
 
+#### What it is
+
+Amazon API Gateway is a ==fully managed service== that makes it easy for developers to ==create, publish, maintain, monitor, and secure APIs== at any scale. APIs act as the "front door" for applications to access data, business logic, or functionality from your backend services. Using API Gateway, you can create RESTful APIs and WebSocket APIs that enable real-time two-way communication applications. API Gateway supports containerized and serverless workloads, as well as web applications.
+
+API Gateway handles all the tasks involved in accepting and processing up to hundreds of thousands of concurrent API calls, including ==traffic management==, ==CORS== support, authorization and ==access control==, ==throttling==, monitoring, and API version management. API Gateway has no minimum fees or startup costs. You pay for the API calls you receive and the amount of data transferred out and, with the API Gateway tiered pricing model, you can reduce your cost as your API usage scales.
+
+
+
+![image-20200708215037062](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/How-API-Gateway-Works.png)
+
 #### What can it do?
 
 - Expose ==HTTPS endpoints== to define a RESTful API 
-- ==Serverless-ly== connect to services like Lambda & DynamoDB 
+- support ==cashing== to increase performance
+- Maintain multiple ==versions== of your API 
 - Send each API endpoint to a ==different target== 
-- Run efficiently with ==low cost== 
-- Scale effortlessly (==auto==)
-- Track and control usage by API key 
+- HA - auto scale 
+  - ==Serverless-ly== connect to services like Lambda & DynamoDB 
 - ==Throttle== requests to prevent attacks
 - Connect to ==CloudWatch to log== all requests for monitoring 
-- Maintain multiple ==versions== of your API 
-- support ==cashing== to increase performance
+- Track and control usage by API key
+- Run efficiently with ==low cost== 
 
 > - ==Enable CORS== to support JS/AJAX that use multiple domains
 
@@ -1490,14 +2058,13 @@ A media transcoder in the cloud. It converts media files from their original sou
   - use API Gateway domain, by default
   - can use custom domain
   - now supports AWS Certificate Manager: free SSL/TLS certs
-  - 
 
 #### Related topic
 
 - CORS Cross-origin-resource-sharing
   - Is a mechanism that allows restriced resources (e.g fonts) on a web page to be requested from another domain outside the domain from which the first resource was served.
   - The server can relax the same-origin policy. 
-- Same-origin policy ![Screen Shot 2020-06-22 at 23.05.49](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-06-22 at 23.05.49.png)
+- Same-origin policy 
 
 
 
@@ -1525,27 +2092,292 @@ Firehose
 
 ![Screen Shot 2020-06-27 at 13.04.33](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-06-22 at 23.13.59.png)
 
-
-
-
-
 ### Web Identity Federation & Cognito
+
+
+
+Web Identity Federation lets you give your users access to AWS resources after they have successfully authenticated with a web-based identity provider like Amazon, Facebook, or Google.
+
+Following successful authentication, the user receives an authentication code from the Web ID provider, which they can trade for temporary AWS security credentials.
+
+Amazon Cognito provides Web Identitfy Federation with the following features:
+
+- ==Sign-up and sign-in== to your apps
+- Access for ==guest users==
+- Acts as an ==Identity Broker== ==between your application and Web ID providers==, so you don't need to write any additional code.
+- ==Synchronizes user data for multiple devices==
+- Recommended for ==all mobile applications== running ==AWS services==
+- Cognito is the recommended approach for Web Identity Federation using social media accounts like Facebook.
+
+Cognito Brokers between app and Facebook or Google to provid==e temporary credentials== which map to an IAM role allowing access to the required resources.
+
+No need for the application to embed or store AWS credentials locally on the device and it gives the users a seamless experience across all mobile devices.
+
+
+
+It use SNS for ==Push Synchronization== to push update on user data cross multiple devices.
+
+![image-20200708223118267](2020-06-01-AWS-domain-knowledge.assets/image-20200708223118267.png)
+
+
+
+#### [Official Doc](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc.html)
+
+> Imagine that you are creating a mobile app that accesses AWS resources, such as a game that runs on a mobile device and stores player and score information using Amazon S3 and DynamoDB.
+>
+> When you write such an app, you'll make requests to AWS services that must be signed with an AWS access key. However, we **strongly** recommend that you ==do **not** embed or distribute long-term AWS credentials with apps== that a user downloads to a device, even in an encrypted store. Instead, build your app so that it requests temporary AWS security credentials dynamically when needed using *web identity federation*. The supplied ==temporary credentials== map to an AWS role that has only the permissions needed to perform the tasks required by the mobile app.
+
+
+
+#### Case study: [Identifying Users and doing S3 access control with Web Identity Federation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc_user-id.html)
+
+
 
 ### Quiz
 
 
 
+## Security
 
+### Reducing Security Threats
+
+
+
+### Key Management Service (KMS)
+
+![image-20200708230423514](2020-06-01-AWS-domain-knowledge.assets/image-20200708230423514.png)
+
+![image-20200708230448212](2020-06-01-AWS-domain-knowledge.assets/image-20200708230448212.png)
+
+![image-20200708230602564](2020-06-01-AWS-domain-knowledge.assets/image-20200708230602564.png)
+
+
+
+![image-20200708230735672](2020-06-01-AWS-domain-knowledge.assets/image-20200708230735672.png)
+
+
+
+### CloudHSM - hardware security module
+
+- Dedicated ==hardware security module== (HSM)
+
+- generate&manage your own encryption keys with ==FIPS 140-2== ==Level 3==  ( level 2 is KMS )
+
+- Run within a VPC
+
+- industry-standard APIs --- no AWS APIs
+
+  > such as `PKCS#11`, Java Cryptography Extensions (JCE), and Microsoft CryptoNG (CNG) libraries.
+
+- ==standards-compliant== and enables you to export all of your keys to most other commercially-available HSMs, subject to your configurations. 
+
+- fully-managed
+
+- scale quickly by ==adding and removing HSM capacity on-demand==, with no up-front costs.
+
+- If you lose your key, it's ==irretrievable==.
+
+![CloudHSM_Diagrams_2-final](2020-06-01-AWS-domain-knowledge.assets/CloudHSM_Diagrams_2-final.6f427ebb14d021b9cd6120aeee72cf4d3723e89b.png)
+
+A: AWS manages the hardware security module (HSM) appliance, but ==does not have access to your keys==
+
+B: You control and manage your own keys
+
+C: Application performance improves (due to close proximity with AWS workloads)
+
+D: Secure key storage in tamper-resistant hardware available in multiple Availability Zones (AZs)
+
+E: Your HSMs are in your Virtual Private Cloud (VPC) and isolated from other AWS networks.
+
+
+
+![image-20200708231847679](2020-06-01-AWS-domain-knowledge.assets/image-20200708231847679.png)
+
+#### Use cases
+
+##### Offload the SSL processing for web servers
+
+
+
+
+
+### Parameter Store
+
+![image-20200708231949527](2020-06-01-AWS-domain-knowledge.assets/image-20200708231949527.png)
+
+- Set TTL
+
+Paras by Hierachies
+
+![image-20200708232111878](2020-06-01-AWS-domain-knowledge.assets/image-20200708232111878.png)
+
+
+
+![image-20200708232543693](2020-06-01-AWS-domain-knowledge.assets/image-20200708232543693.png)
+
+example
+
+![image-20200708232840094](2020-06-01-AWS-domain-knowledge.assets/image-20200708232840094.png)
+
+You can store encrypted data. Then grant your reader function e.g lambda, access to KMS and use the key to decrypt the data.
+
+### Secrets Manager
+
+- secrete example: DB cridential, API keys and 
+
+![image-20200708233319228](2020-06-01-AWS-domain-knowledge.assets/image-20200708233319228.png)
+
+### AWS Shield
+
+![image-20200708233521981](2020-06-01-AWS-domain-knowledge.assets/image-20200708233521981.png)
+
+AWS Shield Standard defends against most common, frequently occurring network and transport layer DDoS attacks that target your web site or applications. ==FREE==
+
+AWS Shield Advanced is available globally on all Amazon CloudFront, AWS Global Accelerator, and Amazon Route 53 edge locations. You can protect your web applications hosted anywhere in the world by deploying Amazon CloudFront in front of your application. ==3000$==
+
+### Web Application Firewall (AWS WAF)
+
+![image-20200708233842595](2020-06-01-AWS-domain-knowledge.assets/image-20200708233842595.png)
+
+A front layer to detect and filter out basic attack?
+
+Configure ==filtering rules== to allow/deny traffic
+
+- IP address
+
+  > Another way is ACL
+
+
+
+![image-20200708234140624](2020-06-01-AWS-domain-knowledge.assets/image-20200708234140624.png)
+
+#### AWS Firewall Manager
+
+![image-20200708234234752](2020-06-01-AWS-domain-knowledge.assets/image-20200708234234752.png)
+
+
+
+### Q&A
+
+1. ![image-20200709005956338](2020-06-01-AWS-domain-knowledge.assets/image-20200709005956338.png)
+
+2. ![image-20200709012952132](2020-06-01-AWS-domain-knowledge.assets/image-20200709012952132.png)
 
 ## Serverless
 
-#### Lambda Concepts
 
-#### Let's Build A Serverless Webpage
 
-#### Let's Build An Alexa Skill
+### What are them?
 
-#### Serverless Application Model (SAM)
+DynamoDB;  API Gateway; S3; Amazon Cognito; 
+
+SQS/SNS/Kinesis
+
+CodeCommit;
+
+**Amazon EventBridge**
+
+Amazon EventBridge is a serverless event bus that makes it easy to connect applications together using data from your own applications, Software-as-a-Service (SaaS) applications, and AWS services.
+
+
+
+**AWS Fargate**
+
+AWS Fargate is a compute engine for Amazon ECS that allows you to run containers without having to manage servers or clusters. 
+
+
+
+**AWS Serverless Application Model (SAM)**
+
+AWS SAM is an ==open-source framework for building serverless applications== using ==simple and clean syntax==. 
+
+
+
+
+
+### Lambda 
+
+#### Concepts
+
+![image-20200708234431079](2020-06-01-AWS-domain-knowledge.assets/image-20200708234431079.png)
+
+
+
+#### Use case
+
+![image-20200708234557803](2020-06-01-AWS-domain-knowledge.assets/image-20200708234557803.png)
+
+![image-20200708234646560](2020-06-01-AWS-domain-knowledge.assets/image-20200708234646560.png)
+
+Traditional HA Architecture v.s Serverless
+
+![image-20200708234737296](2020-06-01-AWS-domain-knowledge.assets/image-20200708234737296.png)
+
+- Langs it supports: Node.js`, `Java`, `C#`, `Go`, `Python`, `PowerShell`
+
+- Price: #ofRequest & Duration & RAM usage
+
+![image-20200708234943579](2020-06-01-AWS-domain-knowledge.assets/image-20200708234943579.png)
+
+> Lambda billing is based on both The MB of RAM reserved and the execution duration in 100ms units.
+
+- Benefit: No servers; Auto scale; ==Super Cheap== testified by `ACloudGuru`
+
+- ==X-Ray== help you to debug
+
+#### Trigger
+
+ALB, Cognito, Lex, Alexa, API Gateway, CloudFront, and Kinesis Data Firehose are all valid direct (synchronous) triggers for Lambda functions. 
+
+S3 is one of the valid asynchronous triggers.
+
+
+
+### Case study --- Let's Build A Serverless Webpage
+
+0. Architecture
+
+![image-20200709000009663](2020-06-01-AWS-domain-knowledge.assets/image-20200709000009663.png)
+
+1. Creat first Lambda function
+
+   ![image-20200709000149971](2020-06-01-AWS-domain-knowledge.assets/image-20200709000149971.png)
+
+   Support runtime env:
+
+   ![image-20200709000233191](2020-06-01-AWS-domain-knowledge.assets/image-20200709000233191.png)
+
+   1. Create a Role with policy template `Simple microservice permissions` 
+
+2. Configuration
+
+   1. Desiner
+
+      Trigger: API Gateway
+
+      > S3, SQS and SNS can do it as well.
+
+   2. Code
+
+      Fill this part with your code
+
+   3. Configure Trigger
+
+
+
+This ACloudGur tutorial is very cool. 
+
+### Let's Build An Alexa Skill
+
+Really cool.
+
+### Serverless Application Model (SAM)
+
+
+
+
+
+
 
 ### Elastic Container Service (ECS)
 
@@ -1553,11 +2385,7 @@ Firehose
 
 ![Screen Shot 2020-06-27 at 13.02.53](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-06-27 at 13.02.53.png)
 
-
-
 #### Components
-
-
 
 - Cluster
   - Logical collection of ECS resources — either ECS EC2 instances or Fargate instances
@@ -1582,7 +2410,9 @@ Firehose
 
 ### QUIZ
 
-![Screen Shot 2020-06-27 at 13.21.02](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-06-27 at 13.21.02.png)
+1. ![image-20200709004743494](2020-06-01-AWS-domain-knowledge.assets/image-20200709004743494.png)
+
+A 500x increase is beyond the scope of a well designed single server system to absorb unless it is already hugely over-specialised to accommodate this sort of burst load. An AWS solution for this situation might include S3 static web pages with client side scripting to meet high demand of information pages. Plus use of a noSQL database to collect customer registration for asynchronous processing, and SQS backed by scalable compute to keep up with the requests. Lightsail does provide a scalable provisioned service solutions, but these still need to be designed an planned by you and so offer no significant advantage in this situation. A standby server is a good idea, but will not help with the anticipated 500x load increase.
 
 
 
@@ -1595,6 +2425,16 @@ Firehose
 Lightsail is an easy-to-use cloud platform that offers you everything needed to build an application or website, plus a cost-effective, monthly plan. Whether you’re new to the cloud or looking to get on the cloud quickly with AWS infrastructure you trust, we’ve got you covered.
 
 ![image-20200706115719181](2020-06-01-AWS-domain-knowledge.assets/image-20200706115719181.png)
+
+### [Amplify](https://aws.amazon.com/amplify)
+
+#### Develop App
+
+![product-page-diagram_Amplify_How-it-works_1@2x](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/product-page-diagram_Amplify_How-it-works_1@2x.3b8b3286597fd65126095c47c579d7d5905468be.png)
+
+#### Host Web App
+
+![product-page-diagram_Amplify_How-it-works_2@2x](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/product-page-diagram_Amplify_How-it-works_2@2x.0a34bb88a6ea331eaef43e115d6f736fa42c3eff.png)
 
 
 
@@ -1611,6 +2451,14 @@ Lightsail is an easy-to-use cloud platform that offers you everything needed to 
   - AWS responsibility __“Security of the Cloud”__
   - Customer responsibility __“Security in the Cloud”__
 
+
+
+#### Q&A
+
+![image-20200709010827575](2020-06-01-AWS-domain-knowledge.assets/image-20200709010827575.png)
+
+
+
 ## Q&A
 
 - what is store data `on-premise` ?
@@ -1618,3 +2466,10 @@ Lightsail is an easy-to-use cloud platform that offers you everything needed to 
 > On-**Premises Data Storage**
 >
 > The term "on **premises**" refers to local hardware, meaning **data** is **stored** on local servers, computers or other devices. For example, a company may purchase a server on which to **store data**. After buying the server, the company sets it up at their headquarters and uploads their **data**.
+
+
+
+
+
+
+
