@@ -1,5 +1,4 @@
 ---
-
 layout: post
 title: "AWS SA-A review - domain knowledge"
 subtitle: ""
@@ -19,9 +18,7 @@ tags:
 
 ![Screen Shot 2020-06-02 at 22.20.28](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/06/Screen%20Shot%202020-06-02%20at%2022.20.28.png)
 
-
-
-#### Role with EC2 
+#### Role with EC2
 
 ##### Example
 
@@ -36,8 +33,6 @@ tags:
 3. Roles can be assigned to an EC2 instance after it is created.
 4. Roles are non-regional. 
 
-
-
 ### AWS Directory Service
 
 > Microsoft service
@@ -51,8 +46,6 @@ tags:
 ![image-20200702134059591](2020-06-01-AWS-domain-knowledge.assets/image-20200702134059591.png)
 
 > ==LDAP== (Lightweight Directory Access Protocol) is a software protocol for enabling anyone to locate data about organizations, individuals and other resources such as files and devices in a network -- whether on the public internet or on a corporate intranet.
-
-
 
 #### AWS managed Microsoft AD
 
@@ -84,8 +77,6 @@ AWS vs. customer responsibility
 
 ![image-20200702134803071](2020-06-01-AWS-domain-knowledge.assets/image-20200702134803071.png)
 
-
-
 ### IAM Policies
 
 ARN
@@ -103,7 +94,6 @@ ARN
 
 ![image-20200702140046192](2020-06-01-AWS-domain-knowledge.assets/image-20200702140046192.png)
 
-
 ![image-20200702140153543](2020-06-01-AWS-domain-knowledge.assets/image-20200702140153543.png)
 
 > Sid is for human to read, like a commend in code.
@@ -119,9 +109,9 @@ ARN
 - AWS-managed vs. customer-managed 
 
 - [Identity policy  vs. Resource policy]([https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_identity-vs-resource.html#:~:text=A%20policy%20is%20an%20object,user%2C%20group%2C%20or%20role.](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_identity-vs-resource.html#:~:text=A policy is an object,user%2C group%2C or role.))
-
+  
   > For same account? For cross-account request?
-  >
+  > 
   > <img src="2020-06-01-AWS-domain-knowledge.assets/Types_of_Permissions.diagram.png" alt="          Identity-based vs resource-based policies       " style="zoom:80%;" />
 
 #### Permission Boundaries
@@ -162,17 +152,13 @@ Action: How to share a resource to another account through ARM?
 
 > IAM integrates with **existing active directory** account allowing single sign-on.
 
-
-
 #### Others
 
 - IAM Supports PCI DSS compliance
-
+  
   > The Payment Card Industry Data Security Standard (==PCI DSS==) refers to payment security standards that ==ensure all sellers== safely and securely ==accept, store, process, and transmit== cardholder data (also known as your customers' credit card information) during a credit card transaction.
 
 - IAM can be use for your users' management as well.
-
-
 
 #### Things To search further
 
@@ -181,17 +167,13 @@ Action: How to share a resource to another account through ARM?
 - What is Setting up a cross account IAM Role for?
 
 > An application you are working on has a new app. The development team for this app requires access to a bucket that is located within your team's aws account. The other team requires programmatic and console level access to your team's bucket. How would you share this bucket with this other team's account?
->
+> 
 > [link](https://aws.amazon.com/premiumsupport/knowledge-center/cross-account-access-s3/)
-
-
-
-
 
 ### Q&A
 
 - When updating the policy used by an IAM Role attached to an EC2 instance, what needs to happen for the changes to take effect?
-
+  
   > Nothing - It will take effect immediately
 
 ## S3
@@ -206,20 +188,18 @@ S3-Standard has an availability of ==99.99%==, S3-IA has an availability of ==99
 
 #### Performance table
 
-|                                    |      S3 Standard       | S3 Intelligent-Tiering* |     S3 Standard-IA     |    S3 One Zone-IA†     |       S3 Glacier        | S3 Glacier Deep Archive |
-| :--------------------------------: | :--------------------: | :---------------------: | :--------------------: | :--------------------: | :---------------------: | :---------------------: |
-|    Designed for ==durability==     | 99.999999999% (11 9’s) | 99.999999999% (11 9’s)  | 99.999999999% (11 9’s) | 99.999999999% (11 9’s) | 99.999999999% (11 9’s)  | 99.999999999% (11 9’s)  |
-|     Designed for availability      |         99.99%         |          99.9%          |         99.9%          |         99.5%          |         99.99%          |         99.99%          |
-|          Availability SLA          |         99.9%          |           99%           |          99%           |          99%           |          99.9%          |          99.9%          |
-|         Availability Zones         |           ≥3           |           ≥3            |           ≥3           |           1            |           ≥3            |           ≥3            |
-| Minimum capacity charge per object |          N/A           |           N/A           |       ==128KB==        |         128KB          |          40KB           |          40KB           |
-|  Minimum storage duration charge   |          N/A           |         30 days         |        30 days         |        30 days         |         90 days         |        180 days         |
-|           Retrieval fee            |          N/A           |           N/A           |    per GB retrieved    |    per GB retrieved    |    per GB retrieved     |    per GB retrieved     |
-|         First byte latency         |    **milliseconds**    |    **milliseconds**     |    **milliseconds**    |    **milliseconds**    | select minutes or hours |      select hours       |
-|            Storage type            |         Object         |         Object          |         Object         |         Object         |         Object          |         Object          |
-|       Lifecycle transitions        |          Yes           |           Yes           |          Yes           |          Yes           |           Yes           |           Yes           |
-
-
+|                                    | S3 Standard            | S3 Intelligent-Tiering* | S3 Standard-IA         | S3 One Zone-IA†        | S3 Glacier              | S3 Glacier Deep Archive |
+|:----------------------------------:|:----------------------:|:-----------------------:|:----------------------:|:----------------------:|:-----------------------:|:-----------------------:|
+| Designed for ==durability==        | 99.999999999% (11 9’s) | 99.999999999% (11 9’s)  | 99.999999999% (11 9’s) | 99.999999999% (11 9’s) | 99.999999999% (11 9’s)  | 99.999999999% (11 9’s)  |
+| Designed for availability          | 99.99%                 | 99.9%                   | 99.9%                  | 99.5%                  | 99.99%                  | 99.99%                  |
+| Availability SLA                   | 99.9%                  | 99%                     | 99%                    | 99%                    | 99.9%                   | 99.9%                   |
+| Availability Zones                 | ≥3                     | ≥3                      | ≥3                     | 1                      | ≥3                      | ≥3                      |
+| Minimum capacity charge per object | N/A                    | N/A                     | ==128KB==              | 128KB                  | 40KB                    | 40KB                    |
+| Minimum storage duration charge    | N/A                    | 30 days                 | 30 days                | 30 days                | 90 days                 | 180 days                |
+| Retrieval fee                      | N/A                    | N/A                     | per GB retrieved       | per GB retrieved       | per GB retrieved        | per GB retrieved        |
+| First byte latency                 | **milliseconds**       | **milliseconds**        | **milliseconds**       | **milliseconds**       | select minutes or hours | select hours            |
+| Storage type                       | Object                 | Object                  | Object                 | Object                 | Object                  | Object                  |
+| Lifecycle transitions              | Yes                    | Yes                     | Yes                    | Yes                    | Yes                     | Yes                     |
 
 ### Security And Encryption
 
@@ -239,8 +219,6 @@ Glacier Vault Lock
 
 ![image-20200701170510604](2020-06-01-AWS-domain-knowledge.assets/image-20200701170510604.png)
 
-
-
 ### Performance
 
 #### prefix
@@ -250,10 +228,8 @@ Glacier Vault Lock
 - To achieve a high number of requests: 3,500 PUT/COPY/POST/DELEtE and 5,500 GET/HEAD requests per second Per prefix
 
 - what are Prefixes? (basically folder path)
-
-  ![image-20200629200636689](2020-06-01-AWS-domain-knowledge.assets/image-20200629200636689.png?lastModify=1593586635)
-
   
+  ![image-20200629200636689](2020-06-01-AWS-domain-knowledge.assets/image-20200629200636689.png?lastModify=1593586635)
 
 #### multipart upload & byte-range fetches
 
@@ -264,8 +240,6 @@ Glacier Vault Lock
 #### S3 KMS limitation
 
 ![Screen Shot 2020-06-29 at 20.12.23](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-06-29 at 20.12.23.png)
-
-
 
 ![Screen Shot 2020-06-29 at 20.12.10](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-06-29 at 20.12.10.png)
 
@@ -285,12 +259,10 @@ Glacier Vault Lock
 - get data by __rows or columns__ using SQL
 - save money on data transfer and increase speed
 
-
-
 > [Selcet v.s Athena]([https://stackoverflow.com/questions/49102577/what-is-difference-between-s3-select-and-athena#:~:text=S3%20Select%20makes%20it%20easy,to%20retrieve%20the%20entire%20object.&text=Amazon%20Athena%20is%20an%20interactive%20query%20service%20that%20makes%20it,Amazon%20S3%20using%20standard%20SQL.](https://stackoverflow.com/questions/49102577/what-is-difference-between-s3-select-and-athena#:~:text=S3 Select makes it easy,to retrieve the entire object.&text=Amazon Athena is an interactive query service that makes it,Amazon S3 using standard SQL.))
->
+> 
 > You can think about AWS S3 Select as a cost-efficient storage optimization that allows retrieving data that matches the predicate in S3 and glacier aka push down filtering.
->
+> 
 > AWS Athena is fully managed analytical service that allows running arbitrary ANSI SQL compliant queries - group by, having, window and geo functions, SQL DDL and DML.
 
 ### AWS Organizations & Sharing S3 Buckets Between Accounts
@@ -298,10 +270,6 @@ Glacier Vault Lock
 ### Cross Region Replication
 
 ### Transfer Acceleration
-
-
-
-
 
 ### DataSync
 
@@ -317,15 +285,9 @@ Glacier Vault Lock
 - Install the ==DataSync agent== to start the replication. 
 - Can be used to replicate ==EFS== to ==EFS==
 
-
-
 ### CloudFront Overview
 
 ![Screen Shot 2020-07-01 at 17.23.08](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-07-01 at 17.23.08.png)
-
-
-
-
 
 ### CloudFront Signed URLs and Cookies
 
@@ -335,8 +297,6 @@ Glacier Vault Lock
 
 1. A signed URL is for individual files. 1 file => 1 URL
 2. A signed cookie is for multiple files. 1 cookie => multiple files. ( 1 cookie for a user to use a peroid?)
-
-
 
 #### Attach policy to Signed URL / Signed cookie
 
@@ -350,19 +310,13 @@ Glacier Vault Lock
 
 ![image-20200702132436786](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/image-20200702132436786.png)
 
-
-
 ![Screen Shot 2020-07-02 at 13.23.43](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-07-02 at 13.23.43.png)
-
-
 
 ### Snowball Overview
 
 ### Storage Gateway
 
 ### Athena vs Macie
-
-
 
 ### Summary
 
@@ -403,8 +357,6 @@ __Objects__: The Key fundaments of S3 Are:
 
 ---
 
-
-
 #### data consistency model
 
 - Amazon S3 provides **read-after-write** consistency for PUTS of new objects in your S3 bucket in all Regions with one caveat. `??` 
@@ -416,37 +368,28 @@ __Objects__: The Key fundaments of S3 Are:
   - atomic updates across keys; need to design&implement our own on application level;
 
 | Eventually consistent read | Consistent read                 |
-| :------------------------- | :------------------------------ |
+|:-------------------------- |:------------------------------- |
 | Stale reads possible       | No stale reads                  |
 | Lowest read latency        | Potential higher read latency   |
 | Highest read throughput    | Potential lower read throughput |
-
-
-
-
-
-
 
 ![Screen Shot 2020-06-04 at 14.04.30](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/06/Screen%20Shot%202020-06-04%20at%2014.04.30.png)
 
 - AWS S3 has four different URLs styles. What are they. what are they used for?
 
-
-
-
-
 ### Q&A
 
 #### Access control
-1. Which of the following options allows users to have secure access to private files located in S3? (Choose 3)
 
+1. Which of the following options allows users to have secure access to private files located in S3? (Choose 3)
+   
    - **CloudFront Signed URLs**
    - Public S3 buckets
    - **CloudFront Signed Cookies**
    - **CloudFront Origin Access Identity**
 
-1. You run a popular photo-sharing website that depends on S3 to store content. Paid advertising is your primary source of revenue. However, you have discovered that other websites are linking directly to the images in your buckets, not to the HTML pages that serve the content. This means that people are not seeing the paid advertising, and you are paying AWS unnecessarily to serve content directly from S3. How might you resolve this issue?
-
+2. You run a popular photo-sharing website that depends on S3 to store content. Paid advertising is your primary source of revenue. However, you have discovered that other websites are linking directly to the images in your buckets, not to the HTML pages that serve the content. This means that people are not seeing the paid advertising, and you are paying AWS unnecessarily to serve content directly from S3. How might you resolve this issue?
+   
    > Remove the ability for images to be served publicly to the site and then use signed URLs with expiry dates.
 
 #### URL
@@ -454,39 +397,39 @@ __Objects__: The Key fundaments of S3 Are:
 1. AWS S3 has four different URLs styles that it can be used to access content in S3. The Virtual Hosted Style URL, the Path-Style Access URL, the Static web site URL, and the Legacy Global Endpoint URL. Which of these represents a correct formatting of the Virtual Hosted Style URL style
 
 2. AWS S3 has four different URLs styles that it can be used to access content in S3. The `Virtual Hosted Style` URL, the `Path-Style Access` URL, the` Static web site` URL, and the `Legacy Global Endpoint` URL. Which of these represents a correct formatting of the `Virtual Hosted Style` URL style
-
+   
    - `http://my-bucket.s3-website-ap-southeast-2.amazonaws.com/index.php`
    - `https://s3.us-west-2.amazonaws.com/my-bucket/slowpuppy.tar`
    - `https://www.my-registered-domain-guru/index.html`
    - `https://my-bucket.s3.us-west-2.amazonaws.com/fastpuppy.csv`
    - `https://my-bucket.amazonaws.com/lazycat.docx`
    - `http://my-bucket.s3-website.us-east-2.amazonaws.com/index.htm`
-
+   
    > Virtual style puts your bucket name 1st, s3 2nd, and the region 3rd. 
-   >
+   > 
    > Path style puts s3 1st and your bucket as a sub domain. 
-   >
+   > 
    > Legacy Global endpoint has no region. 
-   >
+   > 
    > S3 static hosting can be your own domain or your bucket name 1st, s3-website 2nd, followed by the region. 
-   >
+   > 
    > AWS are in the process of phasing out Path style, and support for Legacy Global Endpoint format is limited and discouraged. However it is still useful to be able to recognize them should they show up in logs. Further information:
 
 #### performance
 
 > Performance scales per prefix, so you can use as many prefixes as you need in parallel to achieve the required throughput. There are no limits to the number of prefixes.
->
+> 
 > What is prefixes
 
 1. You have been asked to advise on a __scaling__ concern. The client has an elegant solution that works well. As the information base grows they use __CloudFormation__ to spin up another stack made up of an S3 bucket and supporting compute instances. The trigger for creating a new stack is when the PUT rate approaches 100 PUTs per second. The problem is that as the business grows that number of buckets is growing into the hundreds and will soon be in the thousands. You have been asked what can be done to reduce the number of buckets without changing the basic architecture.
-
+   
    - Refine the key hashing to randomise the name Key to achieve the potential of 300 PUTs per second.
    - `I picked this` Upgrade all buckets to S3 provisioned IOPS to achieve better performance.
    - `correct` Change the trigger level to around 3000 as S3 can now accommodate much higher PUT and GET levels.
    - Set up multiple accounts so that the per account hard limit on S3 buckets is avoided.
-
+   
    > Until 2018 there was a hard limit on S3 puts of `100` PUTs per second. To achieve this care needed to be taken with __the structure of the name Key to ensure parallel processing__. As of July 2018 the limit was raised to 3500 and the need for the Key design was basically eliminated. Disk IOPS is not the issue with the problem. The account limit is not the issue with the problem. Further information: 
-   >
+   > 
    > - https://aws.amazon.com/about-aws/whats-new/2018/07/amazon-s3-announces-increased-request-rate-performance/
    > - https://docs.aws.amazon.com/AmazonS3/latest/dev/request-rate-perf-considerations.html
    > - https://aws.amazon.com/s3/storage-classes/
@@ -494,22 +437,16 @@ __Objects__: The Key fundaments of S3 Are:
 #### storage class; what fits what
 
 1. What is the availability of S3-OneZone-IA?
-
+   
    __99.50%__ 99.90% 100% 99.99%
-
+   
    > OneZone-IA is only stored in one Zone. While it has the same Durability, it may be less Available than normal S3 or S3-IA. Further information: https://aws.amazon.com/s3/storage-classes/?nc=sn&loc=3
 
 2. A company currently store data on-premise. They are looking to migrate to AWS S3 and to store their data in buckets. Each bucket will be named after their individual customers, followed by a random series of letters and numbers. Once written to S3 the data is **rarely changed**, as it has already been sent to the end customer for them to use as they see fit. However, on some occasions, customers may need certain files **updated quickly**, and this may be for work that has been done months or even years ago. **You would need to be able to access this data immediately to make changes in that case, but you must also keep your storage costs extremely low**. The data is not easily reproducible if lost. Which S3 storage class should you choose to minimize costs and to maximize retrieval times?
 
-   
-
 3. You work for a major news network in Europe. They have just released a new mobile app that allows users to post their photos of newsworthy events in real-time, which are then reviewed by your editors before being copied to your website and made public. Your organization expects this app to grow very quickly, essentially doubling its user base each month. The app uses S3 to store the images, and you are expecting sudden and sizable increases in traffic to S3 when a major news event takes place (as users will be uploading large amounts of content.) You need to keep your storage costs to a minimum, and it does not matter if some objects are lost. With these factors in mind, which storage media should you use to keep costs as low as possible?
-
-   > > Answer is: __S3 - One Zone-IA__
-   >
    
-
-
+   > > Answer is: __S3 - One Zone-IA__
 
 ##### cost of retrieval from Glacier
 
@@ -520,12 +457,10 @@ You have been asked to set up a **recovery process** that generates the **lowest
 - Expedited retrievals allow you to **quickly** access your data stored in the S3 Glacier storage class when occasional urgent requests for a **subset** of archives are required, but at the **highest** cost. 
 
 - Standard retrievals allow you to access any of your archived objects **within several hours**, this is faster than bulk (averaging around 12 hours) but more expensive. 
+
 - Bulk retrievals are the lowest-cost retrieval option in Amazon S3 Glacier, enabling you to **retrieve large amounts**, even petabytes, of data inexpensively. 
+
 - Further information: https://docs.aws.amazon.com/AmazonS3/latest/user-guide/restore-archived-objects.html
-
-
-
-
 
 #### others
 
@@ -560,8 +495,6 @@ aws s3 cp /var/www/html/index.html s3://ajsdklfajsdlfjasl_asf2332
 
 - `curl http://169.254.169.254/latest/meta-data/public-ipv4`,  will get the public ip.
 
-
-
 #### EC2 Placement Groups
 
 - You cannot merge PG.
@@ -583,31 +516,24 @@ aws s3 cp /var/www/html/index.html s3://ajsdklfajsdlfjasl_asf2332
 
 ![IMG_B7FA8E69ED8F-1](2020-06-01-AWS-domain-knowledge.assets/IMG_B7FA8E69ED8F-1.jpeg)
 
-
-
-
-
 #### EC2 Hibernate
 
 ![image-20200703172058333](2020-06-01-AWS-domain-knowledge.assets/image-20200703172058333.png)
 
 - to use Hibernation, the root volume must be encrypted
 
-
-
 ![image-20200703172516872](2020-06-01-AWS-domain-knowledge.assets/image-20200703172516872.png)
 
 > t2.micro inluded as well.
-
-
 
 #### Spot Instances & Spot Fleet
 
 Spot instance price history
 
-![ 						The Spot Instance pricing history tool in the Amazon EC2 							console. 					](2020-06-01-AWS-domain-knowledge.assets/spot-instance-pricing-history.png)
+![                         The Spot Instance pricing history tool in the Amazon EC2                             console.                     ](2020-06-01-AWS-domain-knowledge.assets/spot-instance-pricing-history.png)
 
 - Good for
+  
   - CI/CD; Testing
   - webservices
   - Big data and analytics
@@ -616,9 +542,11 @@ Spot instance price history
   - high performance computing
 
 - not good for 
+  
   - Critical jobs
   - Persistent workload
   - DB
+
 - You can block Spot Instances from terminating by using ==Spot Block==
 
 ##### Spot requests
@@ -629,109 +557,80 @@ Spot instance price history
 
 ![image-20200703171602197](2020-06-01-AWS-domain-knowledge.assets/image-20200703171602197.png)
 
-
-
 you can have the following strategies with Spot Fleet
 
 ![image-20200703171542987](2020-06-01-AWS-domain-knowledge.assets/image-20200703171542987.png)
-
-
 
 #### Hypervisor
 
 - Hypervisor for EC2: `Nitro` and `Xen`
 
-
-
-
-
 ### [EC2 Auto Scaling](https://aws.amazon.com/ec2/autoscaling/?nc2=h_ql_prod_cp_ec2auto)
 
 Amazon EC2 Auto Scaling helps you ==maintain application availability== and allows you to ==automatically add or remove EC2 instances according to conditions you define==. You can use the ==fleet management== features of EC2 Auto Scaling to maintain the health and availability of your fleet. You can also use the ==dynamic and predictive scaling== features of EC2 Auto Scaling to add or remove EC2 instances. ==Dynamic scaling== responds to changing demand and predictive scaling automatically schedules the right number of EC2 instances based on predicted demand. Dynamic scaling and predictive scaling can be used together to scale faster.
-
-
-
-
-
-
-
 
 ### EBS
 
 Elastic Block Store (EBS) is an easy to use, high performance ==block storage service== designed for use with Amazon Elastic Compute Cloud (EC2) for both throughput and transaction intensive workloads at any scale.
 
--  ==Termination Protection== is ==turned off== by default
-
+- ==Termination Protection== is ==turned off== by default
+  
   - Root volume will be deleted by default
   - Additional  colume would not
-
+  
   > ( By default) If you turn off a EC2, what would happend to the root volume / addtional volume? 
-  >
+  > 
   > Root one would be terminated as well; but additional ones will persistent.
 
 - Can I delete a snapshot of an EBS Volume that is used as the root device of a registered AMI?
-
+  
   > If the original snapshot was deleted, then the AMI would not be able to use it as the basis to create new instances. For this reason, AWS protects you from accidentally deleting the EBS Snapshot, since it could be critical to your systems. To delete an EBS Snapshot attached to a registered AMI, first remove the AMI, then the snapshot can be deleted
 
 - Which AWS CLI command should I use to create a snapshot of an EBS volume?
-
-  > `aws ec2 create-snapshot`
-
   
-
-
+  > `aws ec2 create-snapshot`
 
 - Which of the following provide the lowest cost EBS options? =>  Cold (sc1) and Throughout Optimized (st1) types are HDD based and will be the lowest cost options.
 
 ![image-20200702180108477](2020-06-01-AWS-domain-knowledge.assets/image-20200702180108477.png)
 
-
-
-
-
 #### volume types
 
 The following table shows use cases and performance characteristics of current generation EBS volumes:
 
-|                                |                             SSD                              |                             SSD                              | HDD                                                          | HDD                                                          |
-| :----------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | ------------------------------------------------------------ | ------------------------------------------------------------ |
-|          Volume Type           |                EBS Provisioned IOPS SSD (io1)                |                EBS General Purpose SSD (gp2)*                | Throughput Optimized HDD (st1)                               | Cold HDD (sc1)                                               |
-|       Short Description        | Highest performance SSD volume designed for latency-sensitive transactional workloads | General Purpose SSD volume that balances price performance for a wide variety of transactional workloads | Low cost HDD volume designed for frequently accessed, throughput intensive workloads | Lowest cost HDD volume designed for less frequently accessed workloads |
-|             Price              |       ==\$0.125==/GB-month​ ==$0.065==/provisioned IOPS       |                      ==$0.10==/GB-month                      | $0.045/GB-month                                              | $0.025/GB-month                                              |
-|          Volume Size           |                         4 GB - 16 TB                         |                         1 GB - 16 TB                         | ==500 GB== - 16 TB                                           | 500 GB - 16 TB                                               |
-|           Use Cases            |         I/O-intensive NoSQL and relational databases         |    Boot volumes, low-latency interactive apps, dev & test    | Big data, data warehouses, log processing                    | Colder data requiring fewer scans per day                    |
-|       Max IOPS**/Volume        |                          ==64,000==                          |                            16,000                            | 500                                                          | 250                                                          |
-|    Max Throughput***/Volume    |                          1,000 MB/s                          |                           250 MB/s                           | 500 MB/s                                                     | 250 MB/s                                                     |
-|       Max IOPS/Instance        |                            80,000                            |                             Same                             | Same                                                         | Same                                                         |
-|    Max Throughput/Instance     |                          2,375 MB/s                          |                             Same                             | Same                                                         | Same                                                         |
-|            API Name            |                             io1                              |                             gp2                              | st1                                                          | sc1                                                          |
-| Dominant Performance Attribute |                             IOPS                             |                             IOPS                             | MB/s                                                         | MB/s                                                         |
-
-
+|                                | SSD                                                                                   | SSD                                                                                                      | HDD                                                                                  | HDD                                                                    |
+|:------------------------------:|:-------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------:| ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| Volume Type                    | EBS Provisioned IOPS SSD (io1)                                                        | EBS General Purpose SSD (gp2)*                                                                           | Throughput Optimized HDD (st1)                                                       | Cold HDD (sc1)                                                         |
+| Short Description              | Highest performance SSD volume designed for latency-sensitive transactional workloads | General Purpose SSD volume that balances price performance for a wide variety of transactional workloads | Low cost HDD volume designed for frequently accessed, throughput intensive workloads | Lowest cost HDD volume designed for less frequently accessed workloads |
+| Price                          | ==\$0.125==/GB-month​ ==$0.065==/provisioned IOPS                                     | ==$0.10==/GB-month                                                                                       | $0.045/GB-month                                                                      | $0.025/GB-month                                                        |
+| Volume Size                    | 4 GB - 16 TB                                                                          | 1 GB - 16 TB                                                                                             | ==500 GB== - 16 TB                                                                   | 500 GB - 16 TB                                                         |
+| Use Cases                      | I/O-intensive NoSQL and relational databases                                          | Boot volumes, low-latency interactive apps, dev & test                                                   | Big data, data warehouses, log processing                                            | Colder data requiring fewer scans per day                              |
+| Max IOPS**/Volume              | ==64,000==                                                                            | 16,000                                                                                                   | 500                                                                                  | 250                                                                    |
+| Max Throughput***/Volume       | 1,000 MB/s                                                                            | 250 MB/s                                                                                                 | 500 MB/s                                                                             | 250 MB/s                                                               |
+| Max IOPS/Instance              | 80,000                                                                                | Same                                                                                                     | Same                                                                                 | Same                                                                   |
+| Max Throughput/Instance        | 2,375 MB/s                                                                            | Same                                                                                                     | Same                                                                                 | Same                                                                   |
+| API Name                       | io1                                                                                   | gp2                                                                                                      | st1                                                                                  | sc1                                                                    |
+| Dominant Performance Attribute | IOPS                                                                                  | IOPS                                                                                                     | MB/s                                                                                 | MB/s                                                                   |
 
 #### Volumes & Snapshots
 
 1. region always be the same as the connected EC2. ( Of cause you want your hard disk be close to the compute)
 
 2. You can change your volume (increase or decrease) on the fly ==even for the root device==! 
-
+   
    > It's crazy. How?
 
 3. Typical scenario: Your client want to move the root device EBS to another AZ. How?
-
+   
    1. My guess: Make a Snapshot => make AMI from the Snapshot => copy the AMI to target region/AZ => Make a device from the Snapshot
 
 4. Snapshots are incremental 
 
 ![image-20200702220450248](2020-06-01-AWS-domain-knowledge.assets/image-20200702220450248.png)
 
-
-
 ![image-20200702220356861](2020-06-01-AWS-domain-knowledge.assets/image-20200702220356861.png)
 
 ![image-20200702220432119](2020-06-01-AWS-domain-knowledge.assets/image-20200702220432119.png)
-
-
 
 #### Encrypted Root Device Volumes & Snapshots
 
@@ -740,10 +639,6 @@ The following table shows use cases and performance characteristics of current g
 #### How to encrypt an unencrypted instance
 
 ![image-20200703165709947](2020-06-01-AWS-domain-knowledge.assets/image-20200703165709947.png)
-
-
-
-
 
 #### AMI Types (EBS vs Instance Store)
 
@@ -756,15 +651,14 @@ You can select your AMI based on:
 - Launch Permissions
 
 - Storage for the Root Device (Root Device Volume)
-
+  
   - Instance Store ( Emphemeral Storage )
-
+    
     > The root device for an instance launched from the AMI is an instance store volume created form a template stored in Amazon S3
-
+  
   - EBS Backed Voumes
-
+    
     > The root device for an instance launched from the AMI is an Amazon EBS volume created from an Amazon EBS snapshot
-
 
 ### EFS - Elastic File System
 
@@ -784,8 +678,6 @@ You can also use AWS EFS to serve web content, keep various backups, and reduce 
 
 EFS scales performance along with capacity, and, while this can be very beneficial in some cases, it can also be a significant drawback. You might not have high enough utilization to reach the desired throughput of the file system. Because AWS EBS provides you with steady and predictable performance, EBS is almost always be a better fit, unless you require that multiple instances access your storage at the same time,
 
-
-
 ### FSx for Windows & FSx for Lustre
 
 > Amazon FSx for Windows File Server provides fully managed, highly reliable, and scalable file storage that is accessible over the industry-standard Server Message Block (SMB) protocol. It is built on Windows Server, delivering a wide range of administrative features such as user quotas, end-user file restore, and Microsoft Active Directory (AD) integration. It offers single-AZ and multi-AZ deployment options, fully managed backups, and encryption of data at rest and in transit. You can optimize cost and performance for your workload needs with SSD and HDD storage options; and you can scale storage and change the throughput performance of your file system at any time. Amazon FSx file storage is accessible from Windows, Linux, and MacOS compute instances and devices running on AWS or on premises. 
@@ -804,8 +696,6 @@ EFS scales performance along with capacity, and, while this can be very benefici
 
 ![IMG_3F2E828D8AD7-1](2020-06-01-AWS-domain-knowledge.assets/IMG_3F2E828D8AD7-1.jpeg)
 
-
-
 ### ENI vs ENA vs EFA
 
 #### Elastic Network Interface - Essentially a virtual network card
@@ -817,13 +707,12 @@ EFS scales performance along with capacity, and, while this can be very benefici
 ![image-20200703164608843](2020-06-01-AWS-domain-knowledge.assets/image-20200703164608843.png)
 
 - No additional charge! 
+
 - use where you want good network performance ( inter-instance )
 
 - Depending on your instance type, Enhanced Networking can be enabled using:
 
 ![image-20200703165200858](2020-06-01-AWS-domain-knowledge.assets/image-20200703165200858.png)
-
-
 
 #### Elastic Fabric Adapter
 
@@ -835,12 +724,6 @@ EFS scales performance along with capacity, and, while this can be very benefici
 
 ![image-20200703165433281](2020-06-01-AWS-domain-knowledge.assets/image-20200703165433281.png)
 
-
-
-
-
-
-
 ### CloudWatch
 
 ![IMG_165B3C07248C-1](2020-06-01-AWS-domain-knowledge.assets/IMG_165B3C07248C-1.jpeg)
@@ -848,8 +731,6 @@ EFS scales performance along with capacity, and, while this can be very benefici
 - on EC2 normally 5 mins; turning on ==detailed monitoring== 1 min intervals ( non-free tier )
 - CloudWatch alarm example: "CPU > 90% in 3 mins out of 10mins".
 - CloudTrail knows who did what. CloudWatch knows how heavy are their burden.
-
-
 
 ### HPC - High Performance Computing
 
@@ -860,20 +741,14 @@ EFS scales performance along with capacity, and, while this can be very benefici
 - AWS ==DataSync== to store on S3, EFS, FSx for Windows, etc
 
 - ==Direct Connect==
-
+  
   ![IMG_FA470DB95D37-1](2020-06-01-AWS-domain-knowledge.assets/IMG_FA470DB95D37-1.jpeg)
 
 - 
 
-
-
 #### Compute and Network
 
 ![IMG_B1C1BF4DD001-1](2020-06-01-AWS-domain-knowledge.assets/IMG_B1C1BF4DD001-1.jpeg)
-
-
-
-
 
 #### Storage
 
@@ -889,13 +764,12 @@ EFS scales performance along with capacity, and, while this can be very benefici
 
 ![IMG_0435B989DD42-1](2020-06-01-AWS-domain-knowledge.assets/IMG_0435B989DD42-1.jpeg)
 
-
-
 ### WAF - Web Application Firewall
 
 - Let you monitor the HTTP and HTTPS requests that are forwarded to ==Amazon CloudFront==, and Application Load Balancer or ==API Gateway==.
 
 - Also lets you control access to your content.
+
 - You can configure conditions such as what IP are allowed to make the request or what query string parameters need to be passed.
 
 At its most basic level, allows 3 different behaviours:
@@ -904,60 +778,44 @@ At its most basic level, allows 3 different behaviours:
 - ==Block== all requests except the ones you specify
 - Count the requests that match the properties you specify
 
-
-
 ![IMG_FF44B5F1965C-1](2020-06-01-AWS-domain-knowledge.assets/IMG_FF44B5F1965C-1.jpeg)
-
-
 
 ##### Application examples
 
 - your country embargos a country, how do you achieve that? WAF is one solution. you can block request from a specific country.
 
 - How to block malicious IP addresses?
+  
   - Use WAF
   - Use Network ACLs
   - 
 
-
-
-
-
-
-
-
-
-
-
 ### Q&A
 
 - Will an Amazon EBS root volume persist independently from the life of the terminated EC2 instance to which it was previously attached? In other words, if I terminated an EC2 instance, would that EBS root volume persist? 
-
+  
   > Yes - Unless 'Delete on Termination' is not unchecked for the volume
 
 - You need to know both the private IP address and public IP address of your EC2 instance. You should ________.
-
-  > Retrieve the instance Metadata from http://169.254.169.254/latest/meta-data/.
   
-- What feature allows to utilize `SR-IOV`? =>  **Enhanced Networking**
+  > Retrieve the instance Metadata from http://169.254.169.254/latest/meta-data/.
 
+- What feature allows to utilize `SR-IOV`? =>  **Enhanced Networking**
+  
   > SR-IOV, or Single Root I/O Virtualization, is a feature of **Enhanced Networking** used to provide higher networking performance. On a normal EC2 instance, multiple EC2 instances may share a single physical network interface on the EC2 Host. SR-IOV effectively dedicates the interface to a single instance, and bypasses parts of the Hypervisor, allowing for better performance Further information:
 
 - Standard Reserved Instances can be moved between regions? __False__
 
 - Is cfn-init a component of EC2 AS? 
-
+  
   > No. cfn-init is not a component of the EC2 Autoscaling service. Instead it is a feature which allows commands to be run, and software installed/configured on EC2 instances when they launch.
 
 - ![image-20200709012019615](2020-06-01-AWS-domain-knowledge.assets/image-20200709012019615.png)
 
-
-
 ## DB
 
-
-
 ### Databases 101
+
 ### Let's Create An RDS Instance
 
 ### RDS Backups, Multi-AZ & Read Replicas
@@ -992,23 +850,11 @@ B) AWS Database Migration Service (AWS DMS)
 
 D) Amazon AppStream 2.0
 
-
-
 ### Quiz
-
-
 
 ![Screen Shot 2020-06-27 at 13.26.11](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-06-27 at 13.26.11.png)
 
-
-
-
-
 ![Screen Shot 2020-06-21 at 15.37.46](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-06-21 at 15.37.46.png)
-
-
-
-
 
 ## Route 53
 
@@ -1021,42 +867,40 @@ unable to health check: simple routing;
 - Diff: Alias Record vs CNAME
 
 - Common DNS Types:
-
-  -  NS Records; A Records;  CNAME;
-
+  
+  - NS Records; A Records;  CNAME;
+  
   - SOA Records: Start of Authority record containing administrative information about the zone, especially regarding zone transfers.
-
+  
   - MX Records: mail exchanger record. 
-
+    
     > ```
-    > Domain			    TTL   Class    Type  Priority      Host
-    > example.com.		1936	IN	     MX	   10         onemail.example.com
-    > example.com.		1936	IN	     MX	   10         twomail.example.com
+    > Domain                TTL   Class    Type  Priority      Host
+    > example.com.        1936    IN         MX       10         onemail.example.com
+    > example.com.        1936    IN         MX       10         twomail.example.com
     > ```
-
+  
   - PTR Records: opsite of A record. resolves an IP address to a domain or host name.
 
 - Register domain name might take up 3 days.
-
-
 
 ### [choosing routing policies](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html)
 
 - Available policies types?
 
-
-
 - simple routing policy
+  
   - One record with multiple IP addresses. 
   - If specify multiple values in a record, Route 53 returs all value to users in random order.
-
+  
   > No health check. When you don't care much about availability or you only have one machine.
 
 - Multivalue answer: simple routing +
-
+  
   - with health check on each record.
 
 - weighted Routing policy
+  
   - You set multiple records with weight values and Route 53 splits traffic based on weight. 
   - support health check and auto ignore unhealthy nodes
   - can set SNS norification for failure on health check
@@ -1068,16 +912,17 @@ unable to health check: simple routing;
 ![Screen Shot 2020-06-22 at 16.23.09](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/06/Screen%20Shot%202020-06-22%20at%2016.23.09.png)
 
 - Failover routing
+  
   - primary and secondary instances: Auto failover
 
 - Geolocation routing
+  
   - geography boundary based routing.
   - scenario: region price/legal/language diffrence. 
 
 - Geoproximity routing (traffic flow only)
+  
   - Highly customizable. Highly complicated.
-
-
 
 ### others
 
@@ -1085,11 +930,7 @@ Alias record:
 
 #### ![Screen Shot 2020-06-22 at 17.03.42](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/06/Screen%20Shot%202020-06-22%20at%2017.03.42.png)
 
-  
-
-
-
-## VPCs 
+## VPCs
 
 > SA-A are expected to be able to build a VPC by memory
 
@@ -1100,36 +941,34 @@ Alias record:
 - By default, how many VPCs am I allowed in each AWS Region -- 5
 
 - By default, instances in new subnets in a custom VPC can communicate with each other across Availability Zones.
-
+  
   > In a custom VPC with new subnets in each AZ, there is a Route that supports communication ==across all subnets/AZs==. Plus a ==Default SG with an allow rule 'All traffic, All protocols, All ports, from anything using this Default SG'==.
 
-
-
 - You can create a ==public-facing subnet== for your webservers that has access to the Internet, and place your backend systems such as databases or application servers in a ==private-facing subnet== with no Internet access. You can leverage multiple layers of security, including security groups and network access control lists, to help control access to Amazon EC2 instances in each subnet. 
+
 - You can create a Hardware Virtual Private Network (VPN) cnnection between your corporate datacenter and your VPC and leverage the AWS cloud as an extension of your corporate datacenter.
+
 - Security Group does not span accross VPCs
 
 ![image-20200704111310363](2020-06-01-AWS-domain-knowledge.assets/image-20200704111310363.png)
 
 > Network ACL serves as first sec layer. 
 
-
-
 #### subnet
 
 - IP for subnet
+  
   - 10 0 0.0 - 10.255 255 255 (10/8 prefix)
   - 172.16.0.0 - 172 31.255 255 (172.16/12 prefix)
   - 192.168.0.0 - 192.168.255.255 (192.168/16 prefix) 
 
 - `/28` is the smallest subnet (16) you are allowed to use in AWS VPC.
+
 - A subnet must be in ==1 AZ==
 
 - 5 IP addresses are reserved:
 
 ![image-20200707150644678](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/image-20200707150644678.png)
-
-
 
 #### What can we do with a VPC?
 
@@ -1154,45 +993,43 @@ Alias record:
 - Instances behave as if they were on the same private network
 
 - You can peer VPC's with other ==AWS accounts== as well as with other VPCs in the same account.
-
+  
   >  ?? Peering is in a star configuration: ie 1 central VPC peers with 4 others. 
 
 - ??  When you create a VPC a default Route Table, Network Access Control List (NACL) and a default Security Group. It won't create any ==subnets==, nor will it create a default ==internet gateway==. 
+
 - US-East-1A in your AWS account can be a completely different availability zone to US-East-1A in another AWS account. The ==AZ's are randomized==. 
+
 - Amazon always reserve 5 IP addresses within your subnets. (first 4 and the last)
+
 - You can only have ==1 Internet Gateway per VPC==. 
+
 - Allows you to connect one VPC with another via a direct network route using private IP addresses. 
+
 - Instances behave as if they were on the same private network • You can peer VPC's with other AWS accounts as well as with other VPCs in the same account. 
+
 - Peering is in a star configuration: ie 1 central VPC peers with 4 others. NO ==TRANSITIVE PEERING==!!! 
+
 - You can peer ==across regions==. 
 
-
-
-
-
-####  ELB on VPC
+#### ELB on VPC
 
 - you need at least 2 public subnet to create a LB.
-
-
 
 #### Pen test on VPC
 
 - Are you permitted to conduct your own vulnerability scans on your own VPC without alerting AWS first?
   - Depends on the type of scan and the service being scanned. Some scans can be performed without alerting AWS, some require you to alert. Until recently customers were not permitted to conduct Penetration Testing without AWS engagement. However that has changed. There are still conditions however.
 
-
-
 ### Practice - Build A Custom VPC
 
 1. Creating a custom VPC
-
 - When you create a VPC, a default Route Table, Network Access Control List (NACL) and a default Security Group is created.
 - It won't create any subnets, nor will it create a default internet gateway.
 
 ![Screen Shot 2020-07-07 at 14.59.42](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/Screen%20Shot%202020-07-07%20at%2014.59.42.png)
 
-2.  create subnet
+2. create subnet
 
 ![image-20200707150425011](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/image-20200707150425011.png)
 
@@ -1203,30 +1040,26 @@ By default, any subnet will be associated to ==Main Route Table== if not explici
 Default Route Table is public accessable?
 
 3. create a IGW and attach it to VPC
-
+   
    > Note that 
-   >
+   > 
    > 1. only one IGW per VPC.
    > 2. IGW are design (by AWS) to be aways available.
 
 4. Create a Route table name "MyPublicRouteTable"  
-
-   -  Route table is inside a VPC
+   
+   - Route table is inside a VPC
    - Adding public access :
-
+   
    ![image-20200707152438453](2020-06-01-AWS-domain-knowledge.assets/image-20200707152438453.png)
-
+   
    ==> 
-
+   
    ![image-20200707152335060](2020-06-01-AWS-domain-knowledge.assets/image-20200707152335060.png)
-
-
 
 5. We create two EC2 instances: `MyWebServer` in public subnet and `MyDBServer` in private subnet.
 
 > We have the IP address for the first one, but we cannot access the one in private subnet.
-
-
 
 Create a security group called `MyDBSG`
 
@@ -1236,13 +1069,9 @@ After accosiate this SG to the `MyDBServer`, now we can SSH from `MyWebServer` t
 
 > Though in this lab we simply pass the private key as auth. It's best to use bastion host to avoid storing key in server. Will be discussed later.
 
-
-
 Now we can SSH to `MyDBServer`. But if we try `yum update` we will have a timeout. That's because it's in private subnet.
 
 Next section is `NAT Instance` and `NAT gateway` which will help to solve this. 
-
-
 
 ### Internet Gateway
 
@@ -1252,36 +1081,31 @@ The purpose of an "Egress-Only Internet Gateway" is to allow IPv6 based traffic 
 
 - what is the purpose on an virtual IG?
 
-
-
 ### Access Control Lists (ACL)
 
 #### Lab - create a NACL
 
 1. Create `MyWebNACL` in a VPC
-
+   
    > By default, all inbound and outbound traffic are ==DENY==
-
+   
    All subnet would be associated with Default ACL.
 
 2. Associate a public subnet with `MyWebNACL` which is currently DENY everything. 
-
+   
    Check connecting to an instance in this subnet, it should fail as timeout.
 
 3. Add rules on both in inbound and outbound traffic on HTTP, HTTPS and SSH.
-
+   
    > Note that we also allow the `Ephemeral port`. And AWS NAT Gateway use 1024-65535 as Ephemeral Ports range.
 
 ![IMG_ABDE9268B993-1](2020-06-01-AWS-domain-knowledge.assets/IMG_ABDE9268B993-1.jpeg)
 
 4. Try adding a DENY rule to reject port `80` as `Rule # 400`, it will not deny. Try same rule with number `99` will deny.
-
+   
    ==The smaller `#` rule wins.==
 
 5. ACL act before security groups.
-
-
-
 - Your VPC automatically comes with a default network ACL, and by default it allows all outbound and inbound traffic. 
 - You can create custom network ACLs. By default, each custom network ACL denies all inbound and outbound traffic until you add rules. 
 - Each subnet in your VPC must be associated with a network ACL. If you don't explicitly associate a subnet with a network ACL, the subnet is automatically associated with the default network ACL. 
@@ -1290,25 +1114,23 @@ The purpose of an "Egress-Only Internet Gateway" is to allow IPv6 based traffic 
 #### Base points
 
 - VPC automatically comes with a default network ACL 
-
+  
   > by default it ==allows all== outbound and inbound traffic. 
 
 - You can create custom network ACLs. 
-
+  
   > by default, custom network ACL ==denies all== inbound and outbound traffic. 
 
 - Each subnet in your VPC ==must be associated with a network ACL==. If you don't explicitly associate a subnet with a network ACL, the subnet is automatically associated with ==the default== network ACL. 
 
 - Block IP Addresses using network ACLs not Security Groups. 
 
-
-
 - `1-N ACL-subnet ` You can associate a network ACL with ==multiple subnets==; however, a subnet can be associated with only one network ACL at a time. 
-
+  
   > When you associate a network ACL with a subnet, the previous association is removed.
 
 - Network ACLs contain a numbered list of rules that is evaluated in order, ==starting with the lowest numbered rule.== 
-
+  
   > ?? does the later override the previous?
 
 - Network ACLs have separate inbound and outbound rules, and each rule can either allow or deny traffic. 
@@ -1326,60 +1148,38 @@ The purpose of an "Egress-Only Internet Gateway" is to allow IPv6 based traffic 
 - DB type SG auto sets the port
 
 - Cannot block specific IP addresses. Can specify allow rules, but not deny rules. (Deny by default)
-
+  
   > instead use Network Access Control Lists (ACL)
 
 - By default, all inbound traffic is `blocked` and all outbound traffic is allowed.
 
 - Change take effect immediately.
 
-
-
 - Security groups are ==stateful== — if you send a request from your instance, the response traffic for that request is allowed to flow in regardless of inbound security group rules. Responses to allowed inbound traffic are allowed to flow out, regardless of outbound rules.
-
-
-
-
-
-
-
-
 
 ![Screen Shot 2020-07-03 at 14.34.44](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-07-03 at 14.34.44.png)
 
-
-
 ### Network Address Translation (NAT)
-
-
 
 #### Create NAT Instance
 
 > In order to download software, the private subnet need to communicate with IGW.
->
+> 
 > `NAT Gateway` and `NAT Instances` are to solve this issue. 
->
+> 
 > `NAT Gateway` are ==HA==, while  `NAT Instances` ( slight outdated ) are ==EC2 instances and might fail==. 
-
-
-
-
 
 1. Create an EC2 instance call `NAT_Instance` by NAT AMI 
 
 2. Disable ==source and destination check== for this instance
-
+   
    > By default, EC2 instances do this check and forbid request that source or destination is not itself. But NAT Instances acting as gateway so we have to disable this check.
 
 3. Add route that, for any out reaching destination, target  `NAT_Instance`.
-
+   
    > By this config, our `NAT_Instance` acts as a bridge between private subnet and public subnet inorder to reach IGW.
 
 ![IMG_9E675FDE0D22-1](2020-06-01-AWS-domain-knowledge.assets/IMG_9E675FDE0D22-1.jpeg)
-
-
-
-
 
 - When creating a NAT instance, Disable Source/Destination Check on the Instance. 
 - ==NAT instances== must be in a ==public== subnet. 
@@ -1407,10 +1207,8 @@ The purpose of an "Egress-Only Internet Gateway" is to allow IPv6 based traffic 
 - Behind a Security Group. 
 
 - If you have resources in multiple Availability Zones and they share one NAT gateway, in the event that the NAT gateway's Availability Zone is down, resources in the other Availability Zones lose internet access.
-
+  
   To create an ==Availability Zone-independent architecture==, create a NAT gateway in each AZ and configure your routing to ensure that ==resources use the NAT gateway in the same AZ.== 
-
-
 
 #### Create NAT Gateway
 
@@ -1428,17 +1226,20 @@ Now private-subnet instances can access to internet by this NAT-G
 - HA: redendant inside the AZ  
 
 - Redundant inside the Availability Zone 
+
 - Preferred by the enterprise 
+
 - Starts at 5Gbps and scales currently to 45Gbps 
+
 - No need to patch  
+
 - Automatically assigned a public ip address 
+
 - Remember to update your route tables. 
+
 - No need to disable Source/Destination Checks 
+
 - ==Not associated with security groups==
-
-
-
-
 
 ### VPC Flow Logs
 
@@ -1448,39 +1249,31 @@ VPC Flow Logs is a feature that enables you to capture information about the IP 
 
 Flow log data is stored ==using Amazon CloudWatch Logs==. After you've created a flow log, you can view and retrieve its data in Amazon CloudWatch Logs. 
 
-
-
 - Flow logs can be created at 3 levels
-
+  
   - VPC
   - subnet 
   - Network Interface Level
-
+  
   > Down to the ENI as well; But not ==Instance level==
-
-
 
 #### Create one
 
 1. Go to CloudWatch, create a Log group: `VPCFlowLogs`
 
 2. Go to VPC, select one VPC, hit `create flow log`,
-
+   
    we have options: 
-
+   
    - Filter `[All, Accept, Reject]` on traffic type.
    - Destination [to S3, to CloudWatch Logs]
    - Destination log group, we just created it in step 1
    - IAM role. 
 
-
-
-
-
 #### Some IP Traffic is not monitored:
 
 - Traffic generated by instances when they contact the Amazon DNS server. 
-
+  
   > If you use your own DNS server, then all traffic to that DNS server is logged. 
 
 - Traffic generated by a Windows instance for Amazon Windows license activation. 
@@ -1497,10 +1290,6 @@ Flow log data is stored ==using Amazon CloudWatch Logs==. After you've created a
 - You can tag flow logs
 - You cannot change the IAM role of a flow log. You set it when you create it, that's it.
 
-
-
-
-
 ### Bastions
 
 A bastion host is a special purpose computer on a network specifically designed and configured to ==withstand attacks==. The computer ==generally hosts a single application, for example a proxy server==, and ==all other services are removed or limited to reduce the threat to the computer==. It is hardened in this manner primarily due to its location and purpose, which is either on the outside of a firewall or in a demilitarized zone (DMZ) and usually involves access from untrusted networks or computers. 
@@ -1510,14 +1299,12 @@ A bastion host is a special purpose computer on a network specifically designed 
 - A NAT Gateway or NAT Instance is used to provide internet traffic to EC2 instances in a private subnets. 
 
 - A Bastion is used to securely administer EC2 instances (Using SSH or RDP). 
+
 - Bastions are called ==Jump Boxes== in Australia. 
+
 - You cannot use a NAT Gateway as a Bastion host. 
 
-
-
 ### Direct Connect
-
-
 
 #### What it is
 
@@ -1561,10 +1348,8 @@ AWS Direct Connect is a cloud service solution that makes it easy to establish a
 - No variability around clients that cache IP addresses
 
 - Lower latency
-
+  
   ![image-20200708155724673](2020-06-01-AWS-domain-knowledge.assets/image-20200708155724673.png)
-
-
 
 ### VPC End Points -- [Doc](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints.html)
 
@@ -1583,8 +1368,6 @@ A [gateway endpoint](https://docs.aws.amazon.com/vpc/latest/userguide/vpce-gatew
 - Amazon S3
 - DynamoDB
 
-
-
 Using Gateway endpoints, you can do the following transformation: 
 
 <img src="2020-06-01-AWS-domain-knowledge.assets/image-20200708161729617.png" alt="image-20200708161729617" height="250" />  <img src="2020-06-01-AWS-domain-knowledge.assets/image-20200708161817017.png" alt="image-20200708161817017" height="250" />
@@ -1592,10 +1375,6 @@ Using Gateway endpoints, you can do the following transformation:
 By using VPC Gateway, you can stay in AWS cloud and communicate with these services without going through internet.
 
 ![VPC-Endpoint-example](2020-06-01-AWS-domain-knowledge.assets/VPC-Endpoint-example.png)
-
-
-
-
 
 #### VPC best practices
 
@@ -1607,17 +1386,9 @@ By using VPC Gateway, you can stay in AWS cloud and communicate with these servi
 - Use Amazon CloudWatch to monitor your VPC components and VPN connections.
 - Use flow logs to capture information about IP traffic going to and from network interfaces in your VPC. 
 
-
-
 ## HA Architecture
 
-
-
-
-
-### Load Balancers And Health Checks 
-
-
+### Load Balancers And Health Checks
 
 #### Cross Zone Load Balancing
 
@@ -1625,13 +1396,9 @@ By using VPC Gateway, you can stay in AWS cloud and communicate with these servi
 
 <img src="https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/image-20200708172237533.png" alt="image-20200708172237533" style="zoom:50%;" />
 
-
-
 #### Path Based routing
 
 ==Path patterns== allow you to direct traffic to different EC2 instances based on the ==URL== contained in the request. 
-
-
 
 #### Sticky Sessions
 
@@ -1654,7 +1421,7 @@ There is no additional charge for AWS Auto Scaling. You pay only for the AWS res
 #### Functions
 
 - **Monitor the health of running instances**
-
+  
   Amazon EC2 Auto Scaling ensures that your application is able to receive traffic and that EC2 instances are working properly. Amazon EC2 Auto Scaling periodically performs health checks to identify any instances that are unhealthy.
 
 - **Replace impaired instances automatically**
@@ -1675,7 +1442,7 @@ Dynamic Scaling with policy on calendar.
 
 For example, every week the traffic to your web application starts to increase on Wednesday, remains high on Thursday, and starts to decrease on Friday. You can plan your scaling activities based on the known traffic patterns of your web application.
 
-##### Predictive Scaling 
+##### Predictive Scaling
 
 ML-powered fancy thing.
 
@@ -1684,25 +1451,22 @@ ML-powered fancy thing.
 1. Create a Launch Configuration
 
 2. Create an AS group
-
+   
    > It starts working
 
 3. You can check the `Activity Status`
+
 4. When you delete a AS group, all the instances created by it will auto terminated
-
-
 
 ### HA Architecture
 
 ![image-20200708175823934](2020-06-01-AWS-domain-knowledge.assets/HA-example.png)
 
-
-
 ![image-20200708180036045](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/HA-quiz.png)
 
 Answer is 3 AZ with 3 instances. 
 
-### HA WebSite Lab -- WordPress 
+### HA WebSite Lab -- WordPress
 
 ![image-20200708180345280](2020-06-01-AWS-domain-knowledge.assets/image-20200708180345280.png)
 
@@ -1715,11 +1479,7 @@ Answer is 3 AZ with 3 instances.
    3. Name
 5. WP EC2 istance
 
-
-
 #### Setting Up EC2
-
-
 
 ##### URL rewrite
 
@@ -1728,15 +1488,12 @@ Answer is 3 AZ with 3 instances.
 > Get the CloudFront url by combining it's domainname 
 
 2. Config Apache to allow URL rewrite: edit  `/etc/httpd/httpd.conf`
-
+   
    ![image-20200708182810662](2020-06-01-AWS-domain-knowledge.assets/image-20200708182810662.png)
 
 3. Bucket policy update
-
+   
     ![image-20200708183006522](2020-06-01-AWS-domain-knowledge.assets/image-20200708183006522.png)
-
-
-
 
 ### Adding Resilience And Autoscaling
 
@@ -1745,8 +1502,6 @@ Answer is 3 AZ with 3 instances.
 A writer node for editing content.
 
 A fleet of nodes for reading.
-
-
 
 1. config a read node
 
@@ -1766,36 +1521,29 @@ Using `crond` to schedual work automatically
 This config does two things:
 
 - sync the code to S3-code bucket
-- sync the content to S3-media bucket
 
+- sync the content to S3-media bucket
 4. create an AMI from the __write node__ we just config
 
 ### RDS auto failover accross AZ
-
-
 
 ### CloudFormation
 
 #### Create a Stack - Lab
 
 1. Choose a Template
+
 2. Fill in all specification
 
 3. Config review
-
+   
    ![image-20200708202630306](2020-06-01-AWS-domain-knowledge.assets/image-20200708202630306.png)
 
 4. Here is the event log
 
 ![image-20200708202559280](2020-06-01-AWS-domain-knowledge.assets/image-20200708202559280.png)
 
-
-
 Try [AWS Quick Starts](https://aws.amazon.com/quickstart/)
-
-
-
-
 
 ### Elastic Beanstalk
 
@@ -1828,29 +1576,24 @@ You only need to upload the code. And it will anto setup and grow to fit capacit
 - the likelihood that you can access a resource or service when you need it ==Availability==
 
 - A product manager walks into your office and advises that the simple single node MySQL RDS instance that has been used for a pilot needs to be upgraded for production. She also advises that they may need to alter the size of the instance once they see how many people use the system during peak periods. The key concern is that there can not be any outages of more than a few seconds during the go-live period. What would you recommend?
-
+  
   - Convert the RDS instance to a multi-AZ implementation.
-
+  
   - Consider replacing it with Aurora before go live.
-
+    
     > There are two issues to be addressed in this question.
-    >
-    > - ==Minimizing outages==, whether due to required maintenance or unplanned failures. 
-    > - the ==possibility of needing to scale up or down==. 
-    >
     > 
-    >
+    > - ==Minimizing outages==, whether due to required maintenance or unplanned failures. 
+    > 
+    > - the ==possibility of needing to scale up or down==. 
+    > 
     > - Read-replicas can help you with high read loads, but are not intended to be a solution to system outages. 
+    > 
     > - Multi-AZ implementations will increase availability because ==in the event of a instance outage one of the instances in another AZs will pick up the load with minimal delay.== 
+    > 
     > - Aurora provided the ==same capability with potentially higher availability and faster response.==
 
-
-
-
-
 ## Architecture Topics
-
-
 
 ### Event-Driven Architecture
 
@@ -1862,8 +1605,6 @@ Event-driven architectures have three key components: ==event producers, event r
 - Producer services and consumer services are decoupled, which allows them to be scaled, updated, and deployed independently.
 
 ![1-SEO-Diagram_Event-Driven-Architecture_Diagram](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/1-SEO-Diagram_Event-Driven-Architecture_Diagram.b3fbc18f8cd65e3af3ccb4845dce735b0b9e2c54-20200708224946647.png)
-
-
 
 #### Benefit
 
@@ -1883,16 +1624,12 @@ An event router acts as a centralized location to audit your application and def
 
 Event-driven architectures are push-based, so everything happens on-demand as the event presents itself in the router. This way, you’re not paying for continuous polling to check for an event. This means less network bandwidth consumption, less CPU utilization, less idle fleet capacity, and less SSL/TLS handshakes.
 
-
-
 #### To think about
 
 - The durability of your event source. Your event source should be reliable and guarantee delivery if you need to process every single event. 
 - Your performance control requirements. Your application should be able to handle the ==asynchronous nature== of event routers. 
 - Your event flow tracking. The indirection introduced by an event-driven architecture allows for dynamic tracking via monitoring services, but not static tracking via code analysis. 
 - The data in your event source. If you need to rebuild state, your event source should be deduplicated and ordered.
-
-
 
 [How to Use Amazon EventBridge to Build Decoupled, Event-Driven Architectures -- 7 Demos](https://pages.awscloud.com/AWS-Learning-Path-How-to-Use-Amazon-EventBridge-to-Build-Decoupled-Event-Driven-Architectures_2020_LP_0001-SRV.html?&trk=ps_a134p000003yBd8AAE&trkCampaign=FY20_2Q_eventbridge_learning_path&sc_channel=ps&sc_campaign=FY20_2Q_EDAPage_eventbridge_learning_path&sc_outcome=PaaS_Digital_Marketing&sc_publisher=Google)
 
@@ -1902,19 +1639,9 @@ Event-driven architectures are push-based, so everything happens on-demand as th
 
 ![image-20200708223747231](2020-06-01-AWS-domain-knowledge.assets/image-20200708223747231.png)
 
-
-
 ### Fanout Pattern
 
-
-
 ### S3 Event Notification
-
-
-
-
-
-
 
 ## Application
 
@@ -1923,26 +1650,26 @@ Event-driven architectures are push-based, so everything happens on-demand as th
 - SQS is a way to de-couple your infrastructure SQS is pull based, not pushed based. 
 
 - Messages size are up to ==256 KB==.
-
+  
   - It's not a hard limit, you can increase it. 
   - But then the message will be stored in S3
 
 - ==retention period==:  can be ==1 minute to 14 days==; by ==default is 4 days==. 
 
 - ==Visibility Time Out== is the amount of time that the message is invisible in the SQS queue after a reader picks up that message. ==Maximun is 12 hours==
-
+  
   > Provided the job is processed before the visibility time out expires, the message will then be deleted from the queue. 
-  >
+  > 
   > If the job is not processed within that time, the message will become visible again and another reader will process it. This could result in the same message being delivered twice. 
 
 - Long polling vs. short polling
-
+  
   - Long polling would not return a response untill a message arrives in the queue, or untill time out.
   - Short polling returns immidiately.
   - For an almost empty queue, using short polling would cost unnecessary money.
 
 - Standard SQS vs FIFO SQS
-
+  
   - Standard: order is not guaranteed and messages can be delivered more than once. 
   - FIFO: order is strictly maintained and messases are delivered only once. 
     - TPS limit: ==300==
@@ -1962,27 +1689,25 @@ The Amazon SQS Free Tier provides you with ==1 million requests== per month at n
 ### SWF
 
 > Kind of a human-computer mix task version of SQS
->
+> 
 > Amazon use it in their warehouse.
 
-
-
-#### SWF vs SQS 
+#### SWF vs SQS
 
 - Amazon SWF presents a ==task-oriented== API,  
-
+  
   > SQS offers a ==message-oriented== API. 
 
 - SWF, workflow execution, can last up to ==1 year== 
-
+  
   > SQS has a retention period of ==up to 14 days==;
 
 - Amazon SWF ensures that ==a task is assigned only once== ( never duplicated )
-
+  
   > With Amazon SQS, you need to ==handle duplicated== messages and may also need to ensure that a message is processed only once. 
 
 - Amazon SWF ==keeps track== of all the tasks and events in an application. 
-
+  
   > With Amazon SQS, you need to implement your own ==application-level tracking==, ==especially== if your application uses ==multiple queues==. 
 
 #### Actors
@@ -1991,18 +1716,16 @@ The Amazon SQS Free Tier provides you with ==1 million requests== per month at n
 - Deciders — Control the flow of activity tasks in a workflow execution. If something has finished (or failed) in a workflow, a Decider decides what to do next. 
 - Activity Workers — Carry out the activity tasks. 
 
-
-
 ### SNS - Simple Notification Service
 
-#### Benefits 
+#### Benefits
 
 - Instantaneous, ==push==-based delivery (no polling) 
 
 - Simple APIs and easy integration with applications
 
 - Flexible message delivery over multiple transport protocols 
-
+  
   ==SMS, email, SQS message, calling any HTTP endpoint==
 
 - Inexpensive, pay-as-you-go model with no up-front costs 
@@ -2017,10 +1740,6 @@ The Amazon SQS Free Tier provides you with ==1 million requests== per month at n
 
 One topic can support multiple endpoint type, e.g. iOS, Android and SMS. When you publish to a topic, SNS deliver appropriately formated copies to each subscriber.
 
-
-
-
-
 ### Elastic Transcoder
 
 A media transcoder in the cloud. It converts media files from their original source format in to different formats that will play on smartphones, tablets, PCs, etc. 
@@ -2032,8 +1751,6 @@ A media transcoder in the cloud. It converts media files from their original sou
 Amazon API Gateway is a ==fully managed service== that makes it easy for developers to ==create, publish, maintain, monitor, and secure APIs== at any scale. APIs act as the "front door" for applications to access data, business logic, or functionality from your backend services. Using API Gateway, you can create RESTful APIs and WebSocket APIs that enable real-time two-way communication applications. API Gateway supports containerized and serverless workloads, as well as web applications.
 
 API Gateway handles all the tasks involved in accepting and processing up to hundreds of thousands of concurrent API calls, including ==traffic management==, ==CORS== support, authorization and ==access control==, ==throttling==, monitoring, and API version management. API Gateway has no minimum fees or startup costs. You pay for the API calls you receive and the amount of data transferred out and, with the API Gateway tiered pricing model, you can reduce your cost as your API usage scales.
-
-
 
 ![image-20200708215037062](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/How-API-Gateway-Works.png)
 
@@ -2066,8 +1783,6 @@ API Gateway handles all the tasks involved in accepting and processing up to hun
   - The server can relax the same-origin policy. 
 - Same-origin policy 
 
-
-
 ![Screen Shot 2020-06-22 at 23.22.33](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-06-22 at 23.22.33-3234626.png)
 
 ### Kinesis
@@ -2084,8 +1799,6 @@ Streaming Data is data that is generated continuously by thousands of data sourc
 > Social network data
 > Geospatial data (think uber.com)
 
-
-
 Firehose 
 
 > Kind of consumes it right away. 
@@ -2093,8 +1806,6 @@ Firehose
 ![Screen Shot 2020-06-27 at 13.04.33](2020-06-01-AWS-domain-knowledge.assets/Screen Shot 2020-06-22 at 23.13.59.png)
 
 ### Web Identity Federation & Cognito
-
-
 
 Web Identity Federation lets you give your users access to AWS resources after they have successfully authenticated with a web-based identity provider like Amazon, Facebook, or Google.
 
@@ -2113,35 +1824,23 @@ Cognito Brokers between app and Facebook or Google to provid==e temporary creden
 
 No need for the application to embed or store AWS credentials locally on the device and it gives the users a seamless experience across all mobile devices.
 
-
-
 It use SNS for ==Push Synchronization== to push update on user data cross multiple devices.
 
 ![image-20200708223118267](2020-06-01-AWS-domain-knowledge.assets/image-20200708223118267.png)
 
-
-
 #### [Official Doc](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc.html)
 
 > Imagine that you are creating a mobile app that accesses AWS resources, such as a game that runs on a mobile device and stores player and score information using Amazon S3 and DynamoDB.
->
+> 
 > When you write such an app, you'll make requests to AWS services that must be signed with an AWS access key. However, we **strongly** recommend that you ==do **not** embed or distribute long-term AWS credentials with apps== that a user downloads to a device, even in an encrypted store. Instead, build your app so that it requests temporary AWS security credentials dynamically when needed using *web identity federation*. The supplied ==temporary credentials== map to an AWS role that has only the permissions needed to perform the tasks required by the mobile app.
-
-
 
 #### Case study: [Identifying Users and doing S3 access control with Web Identity Federation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_oidc_user-id.html)
 
-
-
 ### Quiz
-
-
 
 ## Security
 
 ### Reducing Security Threats
-
-
 
 ### Key Management Service (KMS)
 
@@ -2151,11 +1850,7 @@ It use SNS for ==Push Synchronization== to push update on user data cross multip
 
 ![image-20200708230602564](2020-06-01-AWS-domain-knowledge.assets/image-20200708230602564.png)
 
-
-
 ![image-20200708230735672](2020-06-01-AWS-domain-knowledge.assets/image-20200708230735672.png)
-
-
 
 ### CloudHSM - hardware security module
 
@@ -2166,7 +1861,7 @@ It use SNS for ==Push Synchronization== to push update on user data cross multip
 - Run within a VPC
 
 - industry-standard APIs --- no AWS APIs
-
+  
   > such as `PKCS#11`, Java Cryptography Extensions (JCE), and Microsoft CryptoNG (CNG) libraries.
 
 - ==standards-compliant== and enables you to export all of your keys to most other commercially-available HSMs, subject to your configurations. 
@@ -2189,17 +1884,11 @@ D: Secure key storage in tamper-resistant hardware available in multiple Availab
 
 E: Your HSMs are in your Virtual Private Cloud (VPC) and isolated from other AWS networks.
 
-
-
 ![image-20200708231847679](2020-06-01-AWS-domain-knowledge.assets/image-20200708231847679.png)
 
 #### Use cases
 
 ##### Offload the SSL processing for web servers
-
-
-
-
 
 ### Parameter Store
 
@@ -2210,8 +1899,6 @@ E: Your HSMs are in your Virtual Private Cloud (VPC) and isolated from other AWS
 Paras by Hierachies
 
 ![image-20200708232111878](2020-06-01-AWS-domain-knowledge.assets/image-20200708232111878.png)
-
-
 
 ![image-20200708232543693](2020-06-01-AWS-domain-knowledge.assets/image-20200708232543693.png)
 
@@ -2244,18 +1931,14 @@ A front layer to detect and filter out basic attack?
 Configure ==filtering rules== to allow/deny traffic
 
 - IP address
-
+  
   > Another way is ACL
-
-
 
 ![image-20200708234140624](2020-06-01-AWS-domain-knowledge.assets/image-20200708234140624.png)
 
 #### AWS Firewall Manager
 
 ![image-20200708234234752](2020-06-01-AWS-domain-knowledge.assets/image-20200708234234752.png)
-
-
 
 ### Q&A
 
@@ -2264,8 +1947,6 @@ Configure ==filtering rules== to allow/deny traffic
 2. ![image-20200709012952132](2020-06-01-AWS-domain-knowledge.assets/image-20200709012952132.png)
 
 ## Serverless
-
-
 
 ### What are them?
 
@@ -2279,29 +1960,19 @@ CodeCommit;
 
 Amazon EventBridge is a serverless event bus that makes it easy to connect applications together using data from your own applications, Software-as-a-Service (SaaS) applications, and AWS services.
 
-
-
 **AWS Fargate**
 
 AWS Fargate is a compute engine for Amazon ECS that allows you to run containers without having to manage servers or clusters. 
-
-
 
 **AWS Serverless Application Model (SAM)**
 
 AWS SAM is an ==open-source framework for building serverless applications== using ==simple and clean syntax==. 
 
-
-
-
-
-### Lambda 
+### Lambda
 
 #### Concepts
 
 ![image-20200708234431079](2020-06-01-AWS-domain-knowledge.assets/image-20200708234431079.png)
-
-
 
 #### Use case
 
@@ -2331,8 +2002,6 @@ ALB, Cognito, Lex, Alexa, API Gateway, CloudFront, and Kinesis Data Firehose are
 
 S3 is one of the valid asynchronous triggers.
 
-
-
 ### Case study --- Let's Build A Serverless Webpage
 
 0. Architecture
@@ -2340,30 +2009,28 @@ S3 is one of the valid asynchronous triggers.
 ![image-20200709000009663](2020-06-01-AWS-domain-knowledge.assets/image-20200709000009663.png)
 
 1. Creat first Lambda function
-
+   
    ![image-20200709000149971](2020-06-01-AWS-domain-knowledge.assets/image-20200709000149971.png)
-
+   
    Support runtime env:
-
+   
    ![image-20200709000233191](2020-06-01-AWS-domain-knowledge.assets/image-20200709000233191.png)
-
+   
    1. Create a Role with policy template `Simple microservice permissions` 
 
 2. Configuration
-
+   
    1. Desiner
-
+      
       Trigger: API Gateway
-
+      
       > S3, SQS and SNS can do it as well.
-
+   
    2. Code
-
+      
       Fill this part with your code
-
+   
    3. Configure Trigger
-
-
 
 This ACloudGur tutorial is very cool. 
 
@@ -2372,12 +2039,6 @@ This ACloudGur tutorial is very cool.
 Really cool.
 
 ### Serverless Application Model (SAM)
-
-
-
-
-
-
 
 ### Elastic Container Service (ECS)
 
@@ -2400,13 +2061,9 @@ Really cool.
 - Registry
   - Storage for container images (e.g., Elastic Container Registry (ECR) or Docker Hub). Used to download images to create containers.
 
-
-
 #### Related topics
 
 ##### Containers and Docker
-
-
 
 ### QUIZ
 
@@ -2414,11 +2071,7 @@ Really cool.
 
 A 500x increase is beyond the scope of a well designed single server system to absorb unless it is already hugely over-specialised to accommodate this sort of burst load. An AWS solution for this situation might include S3 static web pages with client side scripting to meet high demand of information pages. Plus use of a noSQL database to collect customer registration for asynchronous processing, and SQS backed by scalable compute to keep up with the requests. Lightsail does provide a scalable provisioned service solutions, but these still need to be designed an planned by you and so offer no significant advantage in this situation. A standby server is a good idea, but will not help with the anticipated 500x load increase.
 
-
-
-
-
-## Combined 
+## Combined
 
 ### Lightsail
 
@@ -2436,40 +2089,27 @@ Lightsail is an easy-to-use cloud platform that offers you everything needed to 
 
 ![product-page-diagram_Amplify_How-it-works_2@2x](https://raw.githubusercontent.com/hbxz/picture-storage/master/2020/07/product-page-diagram_Amplify_How-it-works_2@2x.0a34bb88a6ea331eaef43e115d6f736fa42c3eff.png)
 
-
-
 ## overview/ biz
 
 - Which AWS offering enables users to find, buy, and immediately start using software solutions in their AWS environment?  => AWS Marketplace
 
 - Which service can identify the user that **made the API call** when an Amazon EC2 instance is terminated?  A) AWS Trusted Advisor B) __AWS CloudTrail __C) AWS X-Ray
-
+  
   > AWS `CloudTrail` helps users enable **governance, compliance, and operational and risk auditing** of their AWS accounts. Actions taken by a user, role, or an AWS service are recorded as events in `CloudTrail`. Events include actions taken in the AWS Management Console, AWS Command Line Interface (CLI), and AWS SDKs and APIs.
 
 - [AWS shared responsibility model]()
-
+  
   - AWS responsibility __“Security of the Cloud”__
   - Customer responsibility __“Security in the Cloud”__
-
-
 
 #### Q&A
 
 ![image-20200709010827575](2020-06-01-AWS-domain-knowledge.assets/image-20200709010827575.png)
-
-
 
 ## Q&A
 
 - what is store data `on-premise` ?
 
 > On-**Premises Data Storage**
->
+> 
 > The term "on **premises**" refers to local hardware, meaning **data** is **stored** on local servers, computers or other devices. For example, a company may purchase a server on which to **store data**. After buying the server, the company sets it up at their headquarters and uploads their **data**.
-
-
-
-
-
-
-
