@@ -4,7 +4,7 @@
 
 Hi there. I'm Jason Denn (Denn Ing Kiat).
 
-Welcome to my blog. You can check it [here](hbxz.github.io).
+Welcome to my blog. You can check it [here](https://hbxz.github.io).
 
 Disqus section is currently unavailable. Will fix soon.
 
