@@ -14,15 +14,11 @@ Disqus section is currently unavailable. Will fix soon.
 
 - [x] personalisation from template
 
+- [x] fix pic local reference problem
+
 - [ ] get Disqus work
 
-- [ ] customize domain name
 
-  > DNS + CNAME
-
-- [ ] pwa personalisation
-
-- [x] fix pic local reference problem
 
 #### features on plan
 
